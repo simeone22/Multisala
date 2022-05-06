@@ -1,7 +1,7 @@
 <?php
 include "checkCookie.php";
 if (isset($_SESSION["success"])){
-    echo "<div class='toast align-items-center text-white bg-success border-0 position-absolute top-0 end-0 m-2' role='alert' aria-live='assertive' aria-atomic='true' id='errsave'>";
+    echo "<div class='toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-2' role='alert' aria-live='assertive' aria-atomic='true' id='errsave' style='z-index: 100;'>";
     echo "<div class='d-flex'>";
     echo "<div class='toast-body'>";
     echo $_SESSION["success"];
@@ -13,7 +13,7 @@ if (isset($_SESSION["success"])){
     unset($_SESSION["success"]);
 }
 if (isset($_SESSION["error"])){
-    echo "<div class='toast align-items-center text-white bg-danger border-0 position-absolute top-0 end-0 m-2' role='alert' aria-live='assertive' aria-atomic='true' id='errsave'>";
+    echo "<div class='toast align-items-center text-white bg-danger border-0 position-fixed top-0 end-0 m-2' role='alert' aria-live='assertive' aria-atomic='true' id='errsave' style='z-index: 100;'>";
     echo "<div class='d-flex'>";
     echo "<div class='toast-body'>";
     echo $_SESSION["error"];

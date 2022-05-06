@@ -13,6 +13,12 @@
 </head>
 <body>
 <?php include "toasts.php";?>
+<?php
+if(isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"])){
+    header("Location: home.php");
+    exit();
+}
+?>
 <a href="home.php" class="btn btn-outline-dark m-3"><i class="bi bi-arrow-left-circle-fill me-2"></i>Torna alla Home</a>
 <form class="position-absolute top-50 start-50 translate-middle border border-3 vw-50 px-3 py-4 rounded-3 h-83" action="registra.php" method="post" id="studente">
     <h1 class="mb-4 text-center py-1">Registrazione</h1>

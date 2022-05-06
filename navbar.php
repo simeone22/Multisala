@@ -18,6 +18,9 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                 <li class="nav-item">
                     <a <?php if($position === 'eventi'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="eventi.php"> Eventi</a>
                 </li>
+                <li class="nav-item">
+                    <a <?php if($position === 'info'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="info.php"> Info</a>
+                </li>
             </ul>
             <ul class="navbar-nav">
                 <?php if (isset($_SESSION["logged"])){?>
@@ -26,13 +29,13 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                         <?php echo $_SESSION["username"];?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="Area_Personale.jsp"><i class="bi bi-person-fill me-2"></i>Area personale</a></li>
+                        <li><a class="dropdown-item" href="area-personale.php"><i class="bi bi-person-fill me-2"></i>Area personale</a></li>
                         <?php if ($_SESSION["tipoutente"] == 3) {?>
                         <li>
-                            <a class="dropdown-item" href="VisualizzaInterventi.jsp"><i class="bi bi-tools me-2"></i>Interventi</a>
+                            <a class="dropdown-item" href="prenotazioni.php"><i class="bi bi-ticket-perforated me-2"></i>Prenotazioni</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="VisualizzaFatture.jsp"><i class="bi bi-receipt me-2"></i>Fatture</a>
+                            <a class="dropdown-item" href="recensioni.php"><i class="bi bi-star-fill me-2"></i>Recensioni</a>
                         </li>
                         <?php }elseif($_SESSION["tipoutente"] == 2){?>
                         <li>

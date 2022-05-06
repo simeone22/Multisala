@@ -9,10 +9,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <title>Eventi - Multisala</title>
+    <title>Prenotazioni - Multisala</title>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
+<?php
+if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["tipoutente"] != 3){
+    header("Location: home.php");
+    exit();
+}
+?>
 <?php include "navbar.php" ?>
 </body>
 </html>
