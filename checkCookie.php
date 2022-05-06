@@ -1,6 +1,5 @@
 <?php
 session_start();
-print_r($_SESSION);
 if(!isset($_SESSION["username"], $_SESSION["tipoutente"], $_SESSION["logged"])){
     if(isset($_COOKIE["username"], $_COOKIE["token"])){
         $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)

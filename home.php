@@ -22,7 +22,6 @@
 </style>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";
-echo $_SESSION["username"];?>
 <?php include "navbar.php" ?>
     <div style="height:130%">
         <div class="carousel slide" data-bs-ride="carousel" style="height: 75vh">
