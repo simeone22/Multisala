@@ -3,7 +3,10 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="home.php">Multisala</a>
+        <a class="navbar-brand" href="home.php">
+            <img src="Media/Immagini/logo.png" alt="Logo" width="30" height="24" class="d-inline-block align-text-top me-2">
+            Multisala
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
