@@ -15,7 +15,11 @@ if(isset($_POST["img"])){
         exit();
     }
     $id = $result->fetch_assoc()["IDUtente"];
-    move_uploaded_file($_FILES["immagine"]["tmp_name"], "Media/Utenti/" . $id . ".png");
+    if(!move_uploaded_file($_FILES["immagine"]["tmp_name"], "Media/Utenti/" . $id . ".png")){
+        $_SESSION["error"] = "Errore nell'upload dell'immagine";
+        header("Location: area-personale.php");
+        exit();
+    }
     $_SESSION["success"] = "Immagine modificata con successo";
     header("Location: area-personale.php");
     exit();
@@ -51,7 +55,10 @@ elseif(isset($_POST["pass"])){
         $_SESSION["error"] = "Errore di eliminazione";
         exit(400);
     }
-    unlink("Media/Utenti/".$id.".png");
+    if(!unlink("Media/Utenti/".$id.".png")){
+        $_SESSION["error"] = "Errore di eliminazione";
+        exit(400);
+    }
     $_SESSION["success"] = "Account eliminato con successo";
     mysqli_close($connessione);
 }
