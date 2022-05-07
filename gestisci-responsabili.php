@@ -11,10 +11,16 @@
     <link rel="stylesheet" href="Media/fontawesome/css/all.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
-    <title>Info - Multisala</title>
+    <title>Responsabili - Multisala</title>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
+<?php
+if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["logged"] == false || $_SESSION["tipoutente"] != 1){
+    header("Location: home.php");
+    exit();
+}?>
 <?php include "navbar.php" ?>
+<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-user-tie me-3"></i>Gestisci responsabili</p>
 </body>
 </html>

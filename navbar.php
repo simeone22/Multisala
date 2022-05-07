@@ -32,46 +32,49 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                         <?php echo $_SESSION["username"];?>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="area-personale.php"><i class="bi bi-person-fill me-2"></i>Area personale</a></li>
+                        <li><a class="dropdown-item" href="area-personale.php"><i class="fa-solid fa-user me-2"></i>Area personale</a></li>
                         <?php if ($_SESSION["tipoutente"] == 3) {?>
                         <li>
-                            <a class="dropdown-item" href="prenotazioni.php"><i class="bi bi-ticket-perforated me-2"></i>Prenotazioni</a>
+                            <a class="dropdown-item" href="prenotazioni.php"><i class="fa-solid fa-ticket me-2"></i>Prenotazioni</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="recensioni.php"><i class="bi bi-star-fill me-2"></i>Recensioni</a>
+                            <a class="dropdown-item" href="recensioni.php"><i class="fa-solid fa-star me-2"></i>Recensioni</a>
                         </li>
                         <?php }elseif($_SESSION["tipoutente"] == 2){?>
                         <li>
-                            <a class="dropdown-item" href="GestisciProdotti.jsp"><i class="bi bi-box-seam me-2"></i>Prodotti</a>
+                            <a class="dropdown-item" href="GestisciProdotti.jsp">Prodotti</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="GestisciFornitori.jsp"><i class="bi bi-truck me-2"></i>Fornitori</a>
+                            <a class="dropdown-item" href="GestisciFornitori.jsp">Fornitori</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="GestisciInterventi.jsp"><i class="bi bi-tools me-2"></i>Interventi</a>
+                            <a class="dropdown-item" href="GestisciInterventi.jsp">Interventi</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="GestisciFatture.jsp"><i class="bi bi-receipt me-2"></i>Fatture</a>
+                            <a class="dropdown-item" href="GestisciFatture.jsp">Fatture</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="GestisciClienti.jsp"><i class="bi bi-people-fill me-2"></i>Clienti</a>
+                            <a class="dropdown-item" href="GestisciClienti.jsp">Clienti</a>
                         </li>
                         <?php }else{?>
                             <li>
-                                <a class="dropdown-item" href="VisualizzaInterventi.jsp"><i class="bi bi-tools me-2"></i>Interventi</a>
+                                <a class="dropdown-item" href="gestisci-proiezioni.php"><i class="fa-solid fa-projector me-2"></i>Proiezioni</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="VisualizzaFatture.jsp"><i class="bi bi-receipt me-2"></i>Fatture</a>
+                                <a class="dropdown-item" href="gestisci-responsabili.php"><i class="fa-solid fa-user-tie me-2"></i>Responsabili</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="gestisci-tutti-cinema.php"><i class="fa-solid fa-camera-movie me-2"></i>Cinema</a>
                             </li>
                         <?php }?>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        <li><a class="dropdown-item" href="logout.php"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a></li>
                     </ul>
                 </li>
                 <?php if ($_SESSION["tipoutente"] == 3) {?>
                 <li class="nav-item mx-3">
                     <a href="Carrello.jsp" class="mt-1 btn btn-outline-primary py-2">
-                        <i class="bi bi-cart4"></i>
+                        <i class="fa-solid fa-cart-shopping"></i>
                         <?php
                         $PCount = 0;
                         if (isset($_SESSION["carrello"]) && $_SESSION["carrello"] > 0) {

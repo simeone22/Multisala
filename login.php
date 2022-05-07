@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="Media/fontawesome/css/all.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
 </head>
@@ -20,7 +21,7 @@
         exit();
     }
     ?>
-    <a href="home.php" class="btn btn-outline-dark m-3"><i class="bi bi-arrow-left-circle-fill me-2"></i>Torna alla Home</a>
+    <a href="home.php" class="btn btn-outline-dark m-3"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna alla Home</a>
     <form class="position-absolute top-50 start-50 translate-middle border border-3 px-3 py-4 rounded-3 w-25 h-50" action="verifica.php" method="post">
         <h1 class="mb-4 text-center py-1">Login</h1>
         <div class="form-floating mb-3">
@@ -33,7 +34,7 @@
                 <label for="password">Password</label>
             </div>
             <div class="input-group-append col-md-1 pb-0 m-0">
-                <span id="showhide" class="input-group-text d-flex justify-content-center h-100"><i class="bi bi-eye-fill"></i></span>
+                <span id="showhide" class="input-group-text d-flex justify-content-center h-100"><i class="fa-solid fa-eye"></i></span>
             </div>
         </div>
         <p><input type="checkbox" name="ricordami"> Ricordami (Per 30 giorni).</p>
@@ -51,7 +52,7 @@
                 <div class="modal-body">
                     <form action="password-reset.php" method="post">
                         <div class="form-floating mb-3">
-                            <input name="username" id="usernamem" type="text" placeholder="username" class="form-control" required="">
+                            <input name="username" id="usernamem" type="text" placeholder="username" class="form-control" required>
                             <label for="usernamem">Username</label>
                             <div class="invalid-feedback">Lo username non può essere vuoto.</div>
                         </div>
@@ -70,13 +71,13 @@
             let sh = document.getElementById('showhide').children[0];
             if(pass.type == 'text') {
                 pass.type = 'password';
-                sh.classList.remove("bi-eye-slash-fill");
-                sh.classList.add("bi-eye-fill");
+                sh.classList.remove("fa-eye-slash");
+                sh.classList.add("fa-eye");
             }
             else {
                 pass.type = 'text';
-                sh.classList.remove("bi-eye-fill");
-                sh.classList.add("bi-eye-slash-fill");
+                sh.classList.remove("fa-eye");
+                sh.classList.add("fa-eye-slash");
             }
         });
         function changeUsername(){
