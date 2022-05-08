@@ -58,6 +58,9 @@ if(isset($_GET["id"])){
             <h5 class="mb-1">Sale</h5>
         </div>
         <div class="list-group-item">
+            <div class="alert alert-danger d-none" role="alert" id="alertSala">
+                Le sale non possono avere lo stesso codice.
+            </div>
             <div class="input-group mb-3">
                 <div class="form-floating flex-grow-1" aria-describedby="aggiungiSala">
                     <input type="text" class="form-control" placeholder="Codice sala" id="codiceSala" pattern="([A-z]|[0-9])+" required>
@@ -68,23 +71,26 @@ if(isset($_GET["id"])){
             </div>
         </div>
         <?php
-        /*if(isset($_GET["id"])){
+        if(isset($_GET["id"])){
             $query = "SELECT * FROM Sale WHERE idFCinema = '".$_GET["id"]."'";
             $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+            or die("Connessione fallita: " . mysqli_connect_error());
             $result = mysqli_query($connessione, $query);
             if(mysqli_num_rows($result) > 0){
-                while($row = mysqli_fetch_assoc($result)){
-                    echo "<a href='#' class='list-group-item list-group-item-action flex-column align-items-start'>";
-                    echo "<div class='d-flex w-100 justify-content-between'>";
-                    echo "<h5 class='mb-1'>".$row["CodiceSala"]."</h5>";
-                    echo "<small>".$row["posto"]." posti</small>";
-                    echo "</div>";
-                    echo "<p class='mb-1'>".$row["indirizzo"]."</p>";
-                    echo "<small>".$row["comune"]." (".$row["cap"].")</small>";
-                    echo "</a>";
+                while($row = mysqli_fetch_assoc($result)){?>
+                    <div class='list-group-item'>
+                        <?php echo $row["CodiceSala"];?>
+                        <div class='float-end'>
+                            <button class='btn btn-primary me-2' type='button' onclick='$("#modificaSala").modal("show");$("#nuovoCodiceSala").val(<?php echo $row["CodiceSala"];?>);'>Modifica</button>
+                            <!-- TODO: controllare che funzioni -->
+                            <!--button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale.splice(sale.indexOf(sale.filter(s => s.codice == <?php echo $row["CodiceSala"];?>)[0]), 1);'><i class="fa-solid fa-xmark-large"></i></button-->
+                            <button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale = sale.filter(s => s.codice != <?php echo $row["CodiceSala"];?>);'><i class="fa-solid fa-xmark-large"></i></button>
+                        </div>
+                    </div>
+                <?php
                 }
             }
-        }*/
+        }
         ?>
     </div>
 </div>
@@ -125,9 +131,7 @@ if(isset($_GET["id"])){
                             <button class="btn btn-primary col-2" type="button" id="aggiungiPosto" onclick="aggiungiPosto()"><i class="fa-solid fa-plus-large"></i></button>
                         </div>
                     </div>
-                    <div id="graficoPosti">
-                        <i class="fa-solid fa-loveseat text-primary fs-4 ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="A1"></i>
-                    </div>
+                    <div id="graficoPosti" class="m-1"></div>
                     <?php
                     /*if(isset($_GET["id"])){
                         $query = "SELECT * FROM Sale WHERE idFCinema = '".$_GET["id"]."'";
@@ -157,6 +161,10 @@ if(isset($_GET["id"])){
     </div>
 </div>
 <script>
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
     let sale = [];
     function checkForm(form){
         let inputs = form.getElementsByTagName('input');
@@ -197,9 +205,24 @@ if(isset($_GET["id"])){
         if(sala.posti.filter(p => p.riga == posto.riga && p.colonna == posto.colonna).length > 0){
             document.querySelector('#alert').classList.remove("d-none");
             setTimeout(() => document.querySelector('#alert').classList.add("d-none"), 3000);
+            return;
         }
-        sala.posti.push(posto);
-
+        let pos = sala.posti.push(posto);
+        let postoEl = document.createElement("i");
+        postoEl.classList.add("fa-solid", "fa-loveseat", "fs-4", "text-primary", "ms-1");
+        postoEl.setAttribute("data-bs-toggle", "tooltip");
+        postoEl.setAttribute("data-bs-placement", "top");
+        postoEl.setAttribute("title", posto.riga + posto.colonna);
+        postoEl.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+            let pst = sala.posti.filter(p => p.riga == posto.riga && p.colonna == posto.colonna)[0];
+            sala.posti.splice(sala.posti.indexOf(pst), 1);
+            document.querySelectorAll('[role="tooltip"]').forEach(t => t.parentElement.removeChild(t));
+            this.parentElement.removeChild(this);
+        });
+        //TODO: Inserimento posto in base alla riga e colonna
+        document.getElementById("graficoPosti").appendChild(postoEl);
+        new bootstrap.Tooltip(postoEl);
     }
     function aggiungiSala(){
         let cs = document.getElementById("codiceSala");
@@ -213,6 +236,11 @@ if(isset($_GET["id"])){
             codice: cs.value,
             posti: []
         };
+        if(sale.filter(s => s.codice == sala.codice).length > 0){
+            document.querySelector('#alertSala').classList.remove("d-none");
+            setTimeout(() => document.querySelector('#alertSala').classList.add("d-none"), 3000);
+            return;
+        }
         sale.push(sala);
         let el = document.createElement("div");
         el.className = "list-group-item";
@@ -236,6 +264,16 @@ if(isset($_GET["id"])){
         });
         document.getElementById("listaSale").append(el);
         cs.value = "";
+    }
+    function eliminaPosto(posto){
+        let postoEl = document.querySelectorAll("[data-bs-toggle='tooltip']");
+        for(let i = 0; i < postoEl.length; i++){
+            if(postoEl[i].getAttribute("data-bs-title").split("&nbsp")[0] == posto.riga + posto.colonna){
+                postoEl[i].parentElement.remove();
+                break;
+            }
+        }
+        sale[sale.indexOf(sala)].posti.splice(sala.posti.indexOf(posto), 1);
     }
 </script>
 </body>
