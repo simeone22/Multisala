@@ -220,8 +220,15 @@ if(isset($_GET["id"])){
             document.querySelectorAll('[role="tooltip"]').forEach(t => t.parentElement.removeChild(t));
             this.parentElement.removeChild(this);
         });
-        //TODO: Inserimento posto in base alla riga e colonna
-        document.getElementById("graficoPosti").appendChild(postoEl);
+        let riga = document.getElementsByClassName("r-" + posto.riga)[0];
+        if(riga == undefined){
+            riga = document.createElement("div");
+            riga.classList.add("r-" + posto.riga);
+            //TODO: aggiungere la riga in ordine alfabetico
+            //document.getElementById("graficoPosti").appendChild(riga);
+        }
+        //TODO: aggiungere alla colonna in ordine
+        riga.appendChild(postoEl);
         new bootstrap.Tooltip(postoEl);
     }
     function aggiungiSala(){
