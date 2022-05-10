@@ -21,8 +21,13 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                 <li class="nav-item">
                     <a <?php if($position === 'eventi'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="eventi.php"> Eventi</a>
                 </li>
-                <li class="nav-item">
-                    <a <?php if($position === 'info'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="info.php"> Info</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown" role="button" aria-expanded="false"> Info</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="dove-siamo.php">Dove siamo</a></li>
+                        <li><a class="dropdown-item" href="contatti.php">Contatti</a></li>
+                        <li><a class="dropdown-item" href="faq.php">Faq</a></li>
+                    </ul>
                 </li>
             </ul>
             <ul class="navbar-nav">
