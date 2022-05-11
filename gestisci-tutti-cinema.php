@@ -52,7 +52,7 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
                         echo "<td>".$row["Comune"]."</td>";
                         echo "<td>".$row["CAP"]."</td>";
                         echo "<td><a href='gestisci-cinema.php?id=" . $row["IDCinema"] . "' class='btn btn-primary'>Gestisci</a></td>";
-                        echo "<td>";
+                        echo "</tr>";
                     }
                 }else{
                     echo "<tr><td colspan='5'>Nessun cinema presente</td></tr>";

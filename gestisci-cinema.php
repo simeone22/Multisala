@@ -24,18 +24,40 @@ $nome = "";
 $indirizzo = "";
 $comune = "";
 $cap = "";
+$connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+or die("Connessione fallita: " . mysqli_connect_error());
+$resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 2")
+or die("Query fallita: " . mysqli_error($connessione));
 if(isset($_GET["id"])){
 
 }
 ?>
 <?php include "navbar.php" ?>
     <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi cinema</p>
+<a href="gestisci-tutti-cinema.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
 <div class="w-75 m-auto">
-    <form action="gestisci-cinema.php" method="post">
+    <form action="modifica-cinema.php" method="post">
+        <?php
+        if(!isset($_GET["id"])){
+            echo "<input type='hidden' name='add' value='true'>";
+        }
+        ?>
         <div class="form-floating mb-3">
             <input type="text" class="form-control" name="nome" placeholder="Nome del cinema" id="nome" required>
             <label for="nome">Nome del cinema</label>
             <div class="invalid-feedback">Il nome del cinema non può essere vuoto.</div>
+        </div>
+        <div class="form-floating mb-3">
+            <select name="responsabile" id="responsabile" class="form-control">
+                <option value="-1" disabled selected>Responsabile</option>
+                <?php
+                while($row = mysqli_fetch_assoc($resps)){
+                    echo "<option value='".$row["IDUtente"]."'>".$row["Nome"]." ".$row["Cognome"]."</option>";
+                }
+                ?>
+            </select>
+            <label for="responsabile">Responsabile del cinema</label>
+            <div class="invalid-feedback">Il responsabile deve essere selezionato.</div>
         </div>
         <div class="form-floating mb-3">
             <input type="text" class="form-control" name="indirizzo" placeholder="Indirizzo" id="indirizzo" pattern="^(Via|Viale|Piazza|Strada|Corso|Piazzale|Arco|Autostrada|Borgo|Borghetto|Circonvallazione|Galleria|Giardino|Largo|Lungolago|Lungomare|Parco|Ponte|Porto|Riva|Salita|Vicolo)[ ]([A-z]|[ ])+,[ ]([0-9])+$" required>
@@ -43,16 +65,19 @@ if(isset($_GET["id"])){
             <div class="invalid-feedback">L'indirizzo non è del formato valido.</div>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" pattern="^([A-z])+" placeholder="Comune" type="text" name="comune" id="comune" autocomplete="address-level-2" required>
+            <input class="form-control" pattern="^([A-z])+" placeholder="Comune" type="text" name="comune" id="comune" autocomplete="home city address-level-2" required>
             <label for="comune">Comune</label>
             <div class="invalid-feedback">Il comune non è del formato valido.</div>
         </div>
         <div class="form-floating my-3">
             <input class="form-control" pattern="^([0-9]{5})$" placeholder="CAP" type="text" name="cap" id="cap" required>
-            <label for="fax">CAP</label>
+            <label for="cap">CAP</label>
             <div class="invalid-feedback">Il CAP non è del formato valido.</div>
         </div>
     </form>
+    <div class="alert alert-danger d-none" role="alert" id="alertSale">
+        Ci deve essere almeno una sala e in ogni sala deve esserci almeno un posto.
+    </div>
     <div class="list-group mb-2" id="listaSale">
         <div class="list-group-item list-group-item-primary">
             <h5 class="mb-1">Sale</h5>
@@ -73,9 +98,9 @@ if(isset($_GET["id"])){
         <?php
         if(isset($_GET["id"])){
             $query = "SELECT * FROM Sale WHERE idFCinema = '".$_GET["id"]."'";
-            $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
-            or die("Connessione fallita: " . mysqli_connect_error());
-            $result = mysqli_query($connessione, $query);
+            $result = mysqli_query($connessione, $query)
+            or die("Query fallita!");
+            echo $result->num_rows;
             if(mysqli_num_rows($result) > 0){
                 while($row = mysqli_fetch_assoc($result)){?>
                     <div class='list-group-item'>
@@ -93,6 +118,8 @@ if(isset($_GET["id"])){
         }
         ?>
     </div>
+    <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaCinema()"; else echo "location.href='gestisci-tutti-cinema.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
+    <button class="btn btn-primary float-end" onclick="checkForm()">Salva</button>
 </div>
 <div class="modal" tabindex="-1" id="modificaSala">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -131,31 +158,8 @@ if(isset($_GET["id"])){
                             <button class="btn btn-primary col-2" type="button" id="aggiungiPosto" onclick="aggiungiPosto()"><i class="fa-solid fa-plus-large"></i></button>
                         </div>
                     </div>
-                    <div id="graficoPosti" class="m-1"></div>
-                    <?php
-                    /*if(isset($_GET["id"])){
-                        $query = "SELECT * FROM Sale WHERE idFCinema = '".$_GET["id"]."'";
-                        $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
-                        $result = mysqli_query($connessione, $query);
-                        if(mysqli_num_rows($result) > 0){
-                            while($row = mysqli_fetch_assoc($result)){
-                                echo "<a href='#' class='list-group-item list-group-item-action flex-column align-items-start'>";
-                                echo "<div class='d-flex w-100 justify-content-between'>";
-                                echo "<h5 class='mb-1'>".$row["CodiceSala"]."</h5>";
-                                echo "<small>".$row["posto"]." posti</small>";
-                                echo "</div>";
-                                echo "<p class='mb-1'>".$row["indirizzo"]."</p>";
-                                echo "<small>".$row["comune"]." (".$row["cap"].")</small>";
-                                echo "</a>";
-                            }
-                        }
-                    }*/
-                    ?>
+                    <div id="graficoPosti" class="m-1 mx-auto"></div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="this.parentElement.parentElement.getElementsByTagName('form')[0].reset();">Annulla</button>
-                <button type="button" class="btn btn-primary" onclick="">Salva</button>
             </div>
         </div>
     </div>
@@ -165,9 +169,12 @@ if(isset($_GET["id"])){
     let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
+    //TODO: generare in json php
     let sale = [];
-    function checkForm(form){
+    function checkForm(){
+        let form = document.getElementsByTagName("form")[0]
         let inputs = form.getElementsByTagName('input');
+        let sel = form.getElementsByTagName('select')[0];
         let valid = true;
         for (let i = 0; i < inputs.length; i++){
             if(!inputs[i].checkValidity()){
@@ -177,7 +184,30 @@ if(isset($_GET["id"])){
                 inputs[i].classList.remove("is-invalid");
             }
         }
-        if(valid) form.submit();
+        if(sel.value == -1){
+            valid = false;
+            sel.classList.add("is-invalid");
+        }else {
+            sel.classList.remove("is-invalid");
+        }
+        if(sale.length == 0){
+            valid = false;
+            document.querySelector('#alertSale').classList.remove("d-none");
+            setTimeout(() => document.querySelector('#alertSale').classList.add("d-none"), 3000);
+        }
+        for (let i = 0; i < sale.length; i++) {
+            if(sale[i].posti.length == 0){
+                valid = false;
+                document.querySelector('#alertSale').classList.remove("d-none");
+                setTimeout(() => document.querySelector('#alertSale').classList.add("d-none"), 3000);
+            }else {
+
+            }
+        }
+        if(valid) {
+            //TODO: inviare form con sale e posti
+            form.submit();
+        }
     }
     function aggiungiPosto(){
         let v = true;
@@ -208,28 +238,7 @@ if(isset($_GET["id"])){
             return;
         }
         let pos = sala.posti.push(posto);
-        let postoEl = document.createElement("i");
-        postoEl.classList.add("fa-solid", "fa-loveseat", "fs-4", "text-primary", "ms-1");
-        postoEl.setAttribute("data-bs-toggle", "tooltip");
-        postoEl.setAttribute("data-bs-placement", "top");
-        postoEl.setAttribute("title", posto.riga + posto.colonna);
-        postoEl.addEventListener("contextmenu", function(e){
-            e.preventDefault();
-            let pst = sala.posti.filter(p => p.riga == posto.riga && p.colonna == posto.colonna)[0];
-            sala.posti.splice(sala.posti.indexOf(pst), 1);
-            document.querySelectorAll('[role="tooltip"]').forEach(t => t.parentElement.removeChild(t));
-            this.parentElement.removeChild(this);
-        });
-        let riga = document.getElementsByClassName("r-" + posto.riga)[0];
-        if(riga == undefined){
-            riga = document.createElement("div");
-            riga.classList.add("r-" + posto.riga);
-            //TODO: aggiungere la riga in ordine alfabetico
-            //document.getElementById("graficoPosti").appendChild(riga);
-        }
-        //TODO: aggiungere alla colonna in ordine
-        riga.appendChild(postoEl);
-        new bootstrap.Tooltip(postoEl);
+        genPosto(posto)
     }
     function aggiungiSala(){
         let cs = document.getElementById("codiceSala");
@@ -260,6 +269,12 @@ if(isset($_GET["id"])){
         el.getElementsByTagName("button")[0].addEventListener("click", function(){
             $("#modificaSala").modal("show");
             $('#nuovoCodiceSala').val(sala.codice);
+            $("#rigaPosto").val("");
+            $("#colonnaPosto").val("");
+            document.getElementById('graficoPosti').innerHTML = "";
+            for (let i = 0; i < sala.posti.length; i++) {
+                genPosto(sala.posti[i]);
+            }
         });
         el.getElementsByTagName("div")[0].append(document.createElement("button"));
         el.getElementsByTagName("button")[1].className = "btn btn-danger me-2";
@@ -282,6 +297,67 @@ if(isset($_GET["id"])){
         }
         sale[sale.indexOf(sala)].posti.splice(sala.posti.indexOf(posto), 1);
     }
+    function genPosto(posto){
+        let postoEl = document.createElement("i");
+        postoEl.classList.add("fa-solid", "fa-loveseat", "fs-4", "text-primary", "ms-1");
+        postoEl.setAttribute("data-bs-toggle", "tooltip");
+        postoEl.setAttribute("data-bs-placement", "top");
+        postoEl.setAttribute("title", posto.riga + posto.colonna);
+        postoEl.addEventListener("contextmenu", function(e){
+            e.preventDefault();
+            let pst = sala.posti.filter(p => p.riga == posto.riga && p.colonna == posto.colonna)[0];
+            sala.posti.splice(sala.posti.indexOf(pst), 1);
+            document.querySelectorAll('[role="tooltip"]').forEach(t => t.parentElement.removeChild(t));
+            this.parentElement.removeChild(this);
+        });
+        let riga = document.getElementsByClassName("r-" + posto.riga)[0];
+        if(riga === undefined){
+            riga = document.createElement("div");
+            riga.classList.add("r-" + posto.riga);
+            let gpch = document.getElementById("graficoPosti").children;
+            let len = gpch.length;
+            for(let i = 0; i < len; i++){
+                if(gpch[i].className.slice(2) > posto.riga){
+                    gpch[i].before(riga);
+                    break;
+                }
+            }
+            if(riga.parentElement === null) document.getElementById("graficoPosti").appendChild(riga);
+            riga.appendChild(postoEl);
+        }else{
+            let elColonna = riga.children;
+            let len = elColonna.length;
+            for(let i = 0; i < len; i++){
+                if(parseInt(elColonna[i].ariaLabel.slice(1)) > posto.colonna){
+                    elColonna[i].before(postoEl);
+                    break;
+                }
+            }
+            if(postoEl.parentElement === null) riga.appendChild(postoEl);
+        }
+        new bootstrap.Tooltip(postoEl);
+    }
+    <?php
+    if(isset($_GET["id"])){?>
+        function eliminaCinema(){
+            let form = document.createElement("form");
+            form.setAttribute("method", "POST");
+            form.setAttribute("action", "modifica-cinema.php");
+            form.classList.add("d-none");
+            let input = document.createElement("input");
+            input.setAttribute("type", "hidden");
+            input.setAttribute("name", "id");
+            input.setAttribute("value", <?php echo $_GET["id"]; ?>);
+            form.appendChild(input);
+            let input2 = document.createElement("input");
+            input2.setAttribute("type", "hidden");
+            input2.setAttribute("name", "elimina");
+            input2.setAttribute("value", "true");
+            form.appendChild(input2);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    <?php } ?>
 </script>
 </body>
 </html>
