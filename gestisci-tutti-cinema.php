@@ -62,7 +62,7 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
             </table>
         </div>
     </div>
-    <a class="btn btn-primary" href="gestisci-cinema.php"><i class="bi bi-plus-lg"></i></a>
+    <a class="btn btn-primary" href="gestisci-cinema.php"><i class="fa-solid fa-plus"></i></a>
 </div>
 </body>
 </html>

@@ -18,7 +18,6 @@ if(isset($_POST["add"])){
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
     $query = "INSERT INTO Cinema(NomeCinema, Indirizzo, Comune, CAP, idFResponsabile) VALUES('$nome', '$indirizzo', '$comune', '$cap', '$responsabile')";
-
     $result = mysqli_query($connessione, $query);
     if(!$result){
         $_SESSION["error"] = "Errore nell'inserimento del cinema" . $query;

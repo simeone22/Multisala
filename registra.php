@@ -21,7 +21,7 @@ if($risultato == false){
 }
 copy("Media/Utenti/default.png", "Media/Utenti/" . $connessione->insert_id . ".png");
 $_SESSION["username"] = $_POST["username"];
-$_SESSION["tipoutente"] = 1;
+$_SESSION["tipoutente"] = 3;
 $_SESSION["logged"] = true;
 $_SESSION["success"] = "Registrazione effettuata con successo!";
 header("Location: home.php");
