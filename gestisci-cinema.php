@@ -7,7 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="Media/fontawesome/css/all.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
@@ -33,8 +32,8 @@ if(isset($_GET["id"])){
 }
 ?>
 <?php include "navbar.php" ?>
-    <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi cinema</p>
-<a href="gestisci-tutti-cinema.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
+<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi cinema</p>
+<a href="gestisci-tutti-cinema.php" class="btn btn-outline-dark m-3 mb-5" style="width: 15%"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
 <div class="w-75 m-auto">
     <form action="modifica-cinema.php" method="post">
         <?php
@@ -206,7 +205,16 @@ if(isset($_GET["id"])){
         }
         if(valid) {
             //TODO: inviare form con sale e posti
-            form.submit();
+            $.post("gestisci-cinema.php", {
+                nome: document.getElementById("nome").value,
+                responsabile: document.getElementById("responsabile").value,
+                indirizzo: document.getElementById("indirizzo").value,
+                comune: document.getElementById("comune").value,
+                cap: document.getElementById("cap").value,
+                sale: sale
+            }, function (data, status) {
+                location.href = "gestisci-tutti-cinema.php";
+            });
         }
     }
     function aggiungiPosto(){

@@ -10,7 +10,8 @@ if(isset($_POST["add"])){
     $comune = $_POST["comune"];
     $cap = $_POST["cap"];
     $responsabile = $_POST["responsabile"];
-    if(empty($nome) || empty($indirizzo) || empty($comune) || empty($cap) || empty($responsabile)){
+    $sale = $_POST["sale"];
+    if(empty($nome) || empty($indirizzo) || empty($comune) || empty($cap) || empty($responsabile) || empty($sale)){
         $_SESSION["error"] = "Compilare tutti i campi";
         header("Location: gestisci-tutti-cinema.php");
         exit();
@@ -20,7 +21,29 @@ if(isset($_POST["add"])){
     $query = "INSERT INTO Cinema(NomeCinema, Indirizzo, Comune, CAP, idFResponsabile) VALUES('$nome', '$indirizzo', '$comune', '$cap', '$responsabile')";
     $result = mysqli_query($connessione, $query);
     if(!$result){
-        $_SESSION["error"] = "Errore nell'inserimento del cinema" . $query;
+        $_SESSION["error"] = "Errore nell'inserimento del cinema";
+        header("Location: gestisci-tutti-cinema.php");
+        exit();
+    }
+    $query = "INSERT INTO Sale(CodiceSala, IDCinema) VALUES";
+    $query1 = "INSERT INTO Posti(IDSala, Colonna, Riga) VALUES";
+    for($i = 0; $i < count($sale); $i++){
+        $query .= "('" . ($sale[$i]["codice"]) . "', $connessione->insert_id),";
+        for($j = 0; $j < count($sale[$i]["posti"]); $j++){
+            $query1 .= "((SELECT IDSala FROM Sale WHERE CodiceSala = '" + $sale[$i]["codice"] + "' AND IDCinema = $connessione->insert_id), '" . ($sale[$i]["posti"][$j]["colonna"]) . "', '" . ($sale[$i]["posti"][$j]["riga"]) . "'), ";
+        }
+    }
+    $query = substr($query, 0, -1);
+    $query1 = substr($query1, 0, -2);
+    $result = mysqli_query($connessione, $query);
+    if(!$result){
+        $_SESSION["error"] = "Errore nell'inserimento delle sale";
+        header("Location: gestisci-tutti-cinema.php");
+        exit();
+    }
+    $result = mysqli_query($connessione, $query1);
+    if(!$result){
+        $_SESSION["error"] = "Errore nell'inserimento dei posti" .$query1;
         header("Location: gestisci-tutti-cinema.php");
         exit();
     }
