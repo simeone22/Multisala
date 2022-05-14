@@ -11,6 +11,16 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
     <title>Aggiungi cinema - Multisala</title>
+    <style>
+        .grd{
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            grid-column-gap: 1px;
+            grid-row-gap: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
@@ -153,18 +163,20 @@ if(isset($_GET["id"])){
                     </div>
                     <div class="list-group-item">
                         <div class="input-group row mx-auto">
-                                <div class="form-floating col-5 p-0">
+                                <div class="form-floating col-4 p-0">
                                     <input type="text" class="form-control" placeholder="Riga" id="rigaPosto" style="text-transform: uppercase" pattern="[A-Z]" required>
                                     <label for="codiceSala">Riga</label>
                                     <div class="invalid-feedback">La riga del posto non è valida.</div>
                                 </div>
-                                <div class="form-floating col-5 p-0" aria-describedby="aggiungiPosto">
+                                <div class="form-floating col-4 p-0" aria-describedby="aggiungiPosto">
                                     <input type="number" class="form-control" placeholder="Colonna" id="colonnaPosto" min="0" required>
                                     <label for="colonnaPosto">Colonna</label>
                                     <div class="invalid-feedback">La colonna del posto non può essere vuota.</div>
                                 </div>
                             <button class="btn btn-primary col-2" type="button" id="aggiungiPosto" onclick="aggiungiPosto()"><i class="fa-solid fa-plus-large"></i></button>
+                            <button class="btn btn-primary col-2" type="button" onclick="gridShow()"><i class="fs-3 fa-solid fa-table-cells"></i></button>
                         </div>
+                        <div class="grd d-none mx-auto" id="grid" style="width: 50%;"></div>
                     </div>
                     <div id="graficoPosti" class="m-1 mx-auto"></div>
                 </div>
@@ -390,6 +402,92 @@ if(isset($_GET["id"])){
         }
         new bootstrap.Tooltip(postoEl);
     }
+    function generateGrid(){
+        let grid = document.getElementById("grid");
+        for(let i = 0; i < 14; i++){
+            let tdiv = document.createElement("div");
+            tdiv.style.width = "12px";
+            tdiv.style.height = "12px";
+            tdiv.style.margin = "1px";
+            tdiv.style.fontSize = "12px";
+            if(i != 0) tdiv.innerText = i;
+            grid.appendChild(tdiv);
+        }
+        for(let i = 0; i < 13; i++){
+            let tdiv = document.createElement("div");
+            tdiv.style.width = "12px";
+            tdiv.style.height = "12px";
+            tdiv.style.margin = "1px";
+            tdiv.style.fontSize = "12px";
+            tdiv.innerText = String.fromCharCode(65 + i);
+            grid.appendChild(tdiv);
+            for(let j = 0; j < 13; j++){
+                let div = document.createElement("div");
+                div.className = "border border-secondary";
+                div.style.width = "12px";
+                div.style.height = "12px";
+                div.style.margin = "1px";
+                div.id = "grid-element-" + i + "-" + j;
+                div.onmouseover = function(){
+                    let x = this.id.split("-")[2];
+                    let y = this.id.split("-")[3];
+                    for(let i = 0; i < 13; i++){
+                        for(let j = 0; j < 13; j++){
+                            let div = document.getElementById("grid-element-" + i + "-" + j);
+                            if(i <= x && j <= y){
+                                div.classList.add("bg-primary");
+                            }
+                        }
+                    }
+                }
+                div.onmouseleave = function(){
+                    let x = this.id.split("-")[2];
+                    let y = this.id.split("-")[3];
+                    for(let i = 0; i < 13; i++){
+                        for(let j = 0; j < 13; j++){
+                            let div = document.getElementById("grid-element-" + i + "-" + j);
+                            if(i <= x && j <= y){
+                                div.classList.remove("bg-primary");
+                            }
+                        }
+                    }
+                }
+                div.onclick = function(){
+                    document.getElementById("grid").classList.add("d-none");
+                    let x = this.id.split("-")[2];
+                    let y = this.id.split("-")[3];
+                    generateSeats(x, y);
+                }
+                grid.appendChild(div);
+            }
+        }
+    }
+    function gridShow(){
+        let grid = document.getElementById("grid");
+        if(grid.classList.contains("d-none")){
+            grid.classList.remove("d-none");
+        }else{
+            grid.classList.add("d-none");
+        }
+    }
+    function generateSeats(x, y){
+        let ncs = document.getElementById("nuovoCodiceSala");
+        let sala = sale.filter(s => s.codice == ncs.value)[0];
+        let graficoPosti = document.getElementById("graficoPosti");
+        graficoPosti.innerHTML = "";
+        sala.posti = [];
+        for (let i = 0; i <= x; i++) {
+            for (let j = 0; j <= y; j++) {
+                let posto = {
+                    riga: String.fromCharCode(i + 65),
+                    colonna: j + 1,
+                };
+                sala.posti.push(posto);
+                genPosto(sala, posto);
+            }
+        }
+    }
+    generateGrid();
     <?php
     if(isset($_GET["id"])){?>
         function eliminaCinema(){
