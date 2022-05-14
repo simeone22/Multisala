@@ -23,12 +23,20 @@ $nome = "";
 $indirizzo = "";
 $comune = "";
 $cap = "";
+$responsabile = "";
 $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
 or die("Connessione fallita: " . mysqli_connect_error());
 $resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 2")
 or die("Query fallita: " . mysqli_error($connessione));
 if(isset($_GET["id"])){
-
+    $result = mysqli_query($connessione, "SELECT * FROM Cinema WHERE IDCinema = " . $_GET["id"])
+    or die("Query fallita: " . mysqli_error($connessione));
+    $row = mysqli_fetch_array($result);
+    $nome = $row["NomeCinema"];
+    $indirizzo = $row["Indirizzo"];
+    $comune = $row["Comune"];
+    $cap = $row["CAP"];
+    $responsabile = $row["idFResponsabile"];
 }
 ?>
 <?php include "navbar.php" ?>
@@ -42,7 +50,7 @@ if(isset($_GET["id"])){
         }
         ?>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="nome" placeholder="Nome del cinema" id="nome" required>
+            <input type="text" class="form-control" name="nome" placeholder="Nome del cinema" id="nome" value="<?php echo $nome; ?>" required>
             <label for="nome">Nome del cinema</label>
             <div class="invalid-feedback">Il nome del cinema non può essere vuoto.</div>
         </div>
@@ -51,7 +59,11 @@ if(isset($_GET["id"])){
                 <option value="-1" disabled selected>Responsabile</option>
                 <?php
                 while($row = mysqli_fetch_assoc($resps)){
-                    echo "<option value='".$row["IDUtente"]."'>".$row["Nome"]." ".$row["Cognome"]."</option>";
+                    echo "<option value='".$row["IDUtente"]."'";
+                    if($responsabile == $row["IDUtente"]){
+                        echo " selected";
+                    }
+                    echo ">".$row["Nome"]." ".$row["Cognome"]."</option>";
                 }
                 ?>
             </select>
@@ -59,17 +71,17 @@ if(isset($_GET["id"])){
             <div class="invalid-feedback">Il responsabile deve essere selezionato.</div>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="indirizzo" placeholder="Indirizzo" id="indirizzo" pattern="^(Via|Viale|Piazza|Strada|Corso|Piazzale|Arco|Autostrada|Borgo|Borghetto|Circonvallazione|Galleria|Giardino|Largo|Lungolago|Lungomare|Parco|Ponte|Porto|Riva|Salita|Vicolo)[ ]([A-z]|[ ])+,[ ]([0-9])+$" required>
+            <input type="text" class="form-control" name="indirizzo" placeholder="Indirizzo" id="indirizzo" pattern="^(Via|Viale|Piazza|Strada|Corso|Piazzale|Arco|Autostrada|Borgo|Borghetto|Circonvallazione|Galleria|Giardino|Largo|Lungolago|Lungomare|Parco|Ponte|Porto|Riva|Salita|Vicolo)[ ]([A-z]|[ ])+,[ ]([0-9])+$" value="<?php echo $indirizzo; ?>" required>
             <label for="indirizzo">Indirizzo</label>
             <div class="invalid-feedback">L'indirizzo non è del formato valido.</div>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" pattern="^([A-z])+" placeholder="Comune" type="text" name="comune" id="comune" autocomplete="home city address-level-2" required>
+            <input class="form-control" pattern="^([A-z])+" placeholder="Comune" type="text" name="comune" id="comune" autocomplete="home city address-level-2" value="<?php echo $comune; ?>" required>
             <label for="comune">Comune</label>
             <div class="invalid-feedback">Il comune non è del formato valido.</div>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" pattern="^([0-9]{5})$" placeholder="CAP" type="text" name="cap" id="cap" required>
+            <input class="form-control" pattern="^([0-9]{5})$" placeholder="CAP" type="text" name="cap" id="cap" value="<?php echo $cap; ?>" required>
             <label for="cap">CAP</label>
             <div class="invalid-feedback">Il CAP non è del formato valido.</div>
         </div>
@@ -99,16 +111,13 @@ if(isset($_GET["id"])){
             $query = "SELECT * FROM Sale WHERE idFCinema = '".$_GET["id"]."'";
             $result = mysqli_query($connessione, $query)
             or die("Query fallita!");
-            echo $result->num_rows;
             if(mysqli_num_rows($result) > 0){
                 while($row = mysqli_fetch_assoc($result)){?>
                     <div class='list-group-item'>
                         <?php echo $row["CodiceSala"];?>
                         <div class='float-end'>
-                            <button class='btn btn-primary me-2' type='button' onclick='$("#modificaSala").modal("show");$("#nuovoCodiceSala").val(<?php echo $row["CodiceSala"];?>);'>Modifica</button>
-                            <!-- TODO: controllare che funzioni -->
-                            <!--button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale.splice(sale.indexOf(sale.filter(s => s.codice == <?php echo $row["CodiceSala"];?>)[0]), 1);'><i class="fa-solid fa-xmark-large"></i></button-->
-                            <button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale = sale.filter(s => s.codice != <?php echo $row["CodiceSala"];?>);'><i class="fa-solid fa-xmark-large"></i></button>
+                            <button class='btn btn-primary me-2' type='button' onclick='modSala("<?php echo $row["CodiceSala"];?>")'>Modifica</button>
+                            <button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale = sale.filter(s => s.codice != "<?php echo $row["CodiceSala"];?>");'><i class="fa-solid fa-xmark-large"></i></button>
                         </div>
                     </div>
                 <?php
@@ -150,7 +159,7 @@ if(isset($_GET["id"])){
                                     <div class="invalid-feedback">La riga del posto non è valida.</div>
                                 </div>
                                 <div class="form-floating col-5 p-0" aria-describedby="aggiungiPosto">
-                                    <input type="number" class="form-control" placeholder="Colonna" id="colonnaPosto" required>
+                                    <input type="number" class="form-control" placeholder="Colonna" id="colonnaPosto" min="0" required>
                                     <label for="colonnaPosto">Colonna</label>
                                     <div class="invalid-feedback">La colonna del posto non può essere vuota.</div>
                                 </div>
@@ -168,8 +177,44 @@ if(isset($_GET["id"])){
     let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
-    //TODO: generare in json php
     let sale = [];
+    <?php
+    if(isset($_GET["id"])){
+        $id = $_GET["id"];
+        $query = "SELECT IDPosto, Riga, Colonna, CodiceSala, IDSala FROM Posti AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala WHERE idFCinema = " . $_GET["id"];
+        $result = mysqli_query($connessione, $query);
+        $idsala = 0;
+        $sale = "[";
+        $posti = "";
+        while($row = mysqli_fetch_assoc($result)){
+            if($idsala != $row["IDSala"]){
+                if($idsala != 0){
+                    $posti = substr($posti, 0, -1);
+                    $posti .= "]},";
+                }
+                $idsala = $row["IDSala"];
+                $sale .= $posti;
+                $sale .= "{codice: '" . $row["CodiceSala"] . "', posti: [";
+                $posti = "";
+            }
+            $posti .= "{riga: '" . $row["Riga"] . "', colonna: " . $row["Colonna"] . "},";
+        }
+        $posti = substr($posti, 0, -1);
+        $posti .= "]}";
+        $sale .= $posti . "]";
+        echo "sale = " . $sale . ";";?>
+        function modSala(codsala){
+            $("#modificaSala").modal("show");
+            $("#nuovoCodiceSala").val(codsala);
+            $("#rigaPosto").val("");
+            $("#colonnaPosto").val("");
+            let sala = sale.filter(s => s.codice == codsala)[0];
+            document.getElementById('graficoPosti').innerHTML = "";
+            for (let i = 0; i < sala.posti.length; i++) {
+                genPosto(sala, sala.posti[i]);
+            }
+        }
+    <?php } ?>
     function checkForm(){
         let form = document.getElementsByTagName("form")[0]
         let inputs = form.getElementsByTagName('input');
@@ -204,14 +249,14 @@ if(isset($_GET["id"])){
             }
         }
         if(valid) {
-            //TODO: inviare form con sale e posti
-            $.post("gestisci-cinema.php", {
+            $.post("modifica-cinema.php", {
                 nome: document.getElementById("nome").value,
                 responsabile: document.getElementById("responsabile").value,
                 indirizzo: document.getElementById("indirizzo").value,
                 comune: document.getElementById("comune").value,
                 cap: document.getElementById("cap").value,
-                sale: sale
+                sale: sale,
+                <?php if(!isset($_GET["id"])) { echo "add: true"; } else{ echo "edit: true, id: " . $_GET["id"]; } ?>
             }, function (data, status) {
                 location.href = "gestisci-tutti-cinema.php";
             });
@@ -246,7 +291,7 @@ if(isset($_GET["id"])){
             return;
         }
         let pos = sala.posti.push(posto);
-        genPosto(posto)
+        genPosto(sala, posto)
     }
     function aggiungiSala(){
         let cs = document.getElementById("codiceSala");
@@ -281,7 +326,7 @@ if(isset($_GET["id"])){
             $("#colonnaPosto").val("");
             document.getElementById('graficoPosti').innerHTML = "";
             for (let i = 0; i < sala.posti.length; i++) {
-                genPosto(sala.posti[i]);
+                genPosto(sala, sala.posti[i]);
             }
         });
         el.getElementsByTagName("div")[0].append(document.createElement("button"));
@@ -295,7 +340,7 @@ if(isset($_GET["id"])){
         document.getElementById("listaSale").append(el);
         cs.value = "";
     }
-    function eliminaPosto(posto){
+    function eliminaPosto(sala, posto){
         let postoEl = document.querySelectorAll("[data-bs-toggle='tooltip']");
         for(let i = 0; i < postoEl.length; i++){
             if(postoEl[i].getAttribute("data-bs-title").split("&nbsp")[0] == posto.riga + posto.colonna){
@@ -305,7 +350,7 @@ if(isset($_GET["id"])){
         }
         sale[sale.indexOf(sala)].posti.splice(sala.posti.indexOf(posto), 1);
     }
-    function genPosto(posto){
+    function genPosto(sala, posto){
         let postoEl = document.createElement("i");
         postoEl.classList.add("fa-solid", "fa-loveseat", "fs-4", "text-primary", "ms-1");
         postoEl.setAttribute("data-bs-toggle", "tooltip");
