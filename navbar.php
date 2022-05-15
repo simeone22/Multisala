@@ -24,7 +24,6 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdowni" data-bs-toggle="dropdown" role="button" aria-expanded="false"> Info</a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdowni">
-                        <li><a class="dropdown-item" href="dove-siamo.php">Dove siamo</a></li>
                         <li><a class="dropdown-item" href="contatti.php">Contatti</a></li>
                         <li><a class="dropdown-item" href="faq.php">Faq</a></li>
                     </ul>

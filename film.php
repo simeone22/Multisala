@@ -19,9 +19,14 @@
       <div class="row movie my-3 align-items-center">
           <div class="col-12 col-md-4">
               <div class="movie-images">
-                  <a href="/film/tutankhamon-l-ultima-mostra_2021-40dc0da1-c62d-4a83-a229-4fc53c2508d0">
-                  <img alt="Tutankhamon - L'ultima mostra" src="https://cdn.18tickets.net/impero/uploads/film/playbill/9540/standard_264a533e-a613-422b-9bdd-96114d3a432d.jpg">
-                  </a>
+                  <div class="movie-boxes">
+                      <a href="/film/tutankhamon-l-ultima-mostra_2021-40dc0da1-c62d-4a83-a229-4fc53c2508d0">
+                          <img alt="Tutankhamon - L'ultima mostra" src="https://cdn.18tickets.net/impero/uploads/film/playbill/9540/standard_264a533e-a613-422b-9bdd-96114d3a432d.jpg">
+                      </a>
+                      <p style="font-family: 'Arial Black'; text-align: center" class="">
+                          Tutankhamon - L'ultima mostra
+                      </p>
+                  </div>
               </div>
           </div>
       </div>

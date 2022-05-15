@@ -18,8 +18,19 @@
 if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["logged"] == false || $_SESSION["tipoutente"] != 1){
     header("Location: home.php");
     exit();
-}?>
+}
+$nome = "";
+$cognome = "";
+$indirizzo = "";
+$comune = "";
+$cap = "";
+$connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+or die("Connessione fallita: " . mysqli_connect_error());
+$resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 2")
+or die("Query fallita: " . mysqli_error($connessione));
+?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-user-tie me-3"></i>Gestisci responsabili</p>
+
 </body>
 </html>
