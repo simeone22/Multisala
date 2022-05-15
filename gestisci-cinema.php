@@ -34,6 +34,7 @@ $indirizzo = "";
 $comune = "";
 $cap = "";
 $responsabile = "";
+$data = "";
 $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
 or die("Connessione fallita: " . mysqli_connect_error());
 $resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 2")
@@ -47,6 +48,10 @@ if(isset($_GET["id"])){
     $comune = $row["Comune"];
     $cap = $row["CAP"];
     $responsabile = $row["idFResponsabile"];
+    $data = new DateTime();
+    if(isset($_GET["date"])){
+        $data = DateTime::createFromFormat("Y-m-d", $_GET["date"]);
+    }
 }
 ?>
 <?php include "navbar.php" ?>
@@ -139,13 +144,18 @@ if(isset($_GET["id"])){
     </div>
     <?php if(isset($_GET["id"])){?>
     <div class="table-responsive mb-3">
+        <div class="form-floating mb-3">
+            <input type="date" class="form-control" placeholder="Giorno" id="giornoProiezioni" onchange="impostaGiornoProiezioni()" value="<?php echo $data->format("Y-m-d");?>" required>
+            <label for="giornoProiezioni">Giorno</label>
+            <div class="invalid-feedback">Il giorno non può essere vuoto.</div>
+        </div>
         <table class="table table-bordered table-striped table-hover caption-top mb-1">
             <thead class="table-dark">
                 <tr><td colspan="25" class="text-center fw-bold">Orari</td></tr>
                 <tr>
                     <th>Sala</th>
                     <?php
-                        $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDSala, CodiceSala, OraInizio, Durata, Privata FROM ((Proiezioni AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala) INNER JOIN Cinema AS C ON S.idFCinema = C.IDCinema) INNER JOIN Film AS F ON P.idFFilm = F.IDFilm WHERE GETSTARTWEEKDATE(now()) = GETSTARTWEEKDATE(OraInizio) AND C.IDCinema = '".$_GET["id"]."' ORDER BY CodiceSala, OraInizio");
+                        $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDSala, CodiceSala, OraInizio, Durata, Privata FROM ((Proiezioni AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala) INNER JOIN Cinema AS C ON S.idFCinema = C.IDCinema) INNER JOIN Film AS F ON P.idFFilm = F.IDFilm WHERE DATE(OraInizio) = '" . $data->format("Y-m-d") . "' AND C.IDCinema = '".$_GET["id"]."' ORDER BY CodiceSala, OraInizio");
                         $film = $result->fetch_all(MYSQLI_ASSOC);
                         for($i = 0; $i < 24; $i++){
                             echo "<th>". ($i + 1) ."</th>";
@@ -290,7 +300,7 @@ if(isset($_GET["id"])){
                     <div class="form-floating mb-3">
                         <input type="datetime-local" class="form-control" placeholder="Ora inizio" id="dataProiezione" onchange="impostaOraFineProiezione()" required>
                         <label for="dataProiezione">Ora inizio</label>
-                        <div class="invalid-feedback">L'ora di inizio non può essere vuota.</div>
+                        <div class="invalid-feedback">L'ora di inizio non può essere vuota e non può essere più recente di adesso.</div>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="datetime-local" class="form-control" placeholder="Ora fine" id="oraFineProiezione" readonly>
@@ -671,18 +681,22 @@ if(isset($_GET["id"])){
             let dtf = new Date($('#oraFineProiezione').val());
             let dti = new Date(dataProiezione.value);
             for (let i = 0; i < proiezioni.length; i++) {
-                if(proiezioni[i].IDProiezione != $('#idProiezione').val() && proiezioni[i].IDSala == salaProiezione.value){
-                    let dti2 = new Date(proiezioni[i].OraInizio);
-                    let film = films.filter(f => f.IDFilm == proiezioni[i].IDFilm)[0];
-                    let dtf2 = new Date(dti2.getTime() + film.Durata * 60000);
-                    if(dti2.getTime() > dti.getTime() && dti2.getTime() < dtf.getTime()){
-                        valid = false;
-                        break;
+                if(proiezioni[i].IDProiezione != $('#idProiezione').val()){
+                    if(proiezioni[i].IDSala == salaProiezione.value) {
+                        let dti2 = new Date(proiezioni[i].OraInizio);
+                        let film = films.filter(f => f.IDFilm == proiezioni[i].IDFilm)[0];
+                        let dtf2 = new Date(dti2.getTime() + film.Durata * 60000);
+                        if (dti2.getTime() > dti.getTime() && dti2.getTime() < dtf.getTime()) {
+                            valid = false;
+                            break;
+                        } else if (dtf2.getTime() > dti.getTime() && dtf2.getTime() < dtf.getTime()) {
+                            valid = false;
+                            break;
+                        }
                     }
-                    else if(dtf2.getTime() > dti.getTime() && dtf2.getTime() < dtf.getTime()){
-                        valid = false;
-                        break;
-                    }
+                }else if(new Date() > new Date(proiezioni[i].OraInizio) || new Date() > dti){
+                    dataProiezione.classList.add("is-invalid");
+                    return;
                 }
             }
             if(!valid){
@@ -716,6 +730,9 @@ if(isset($_GET["id"])){
             $('#oraFineProiezione').val("");
             $('#proiezionePrivata').prop("checked", false);
             $('#alertProiezione').addClass("d-none");
+        }
+        function impostaGiornoProiezioni(){
+            location.href='gestisci-cinema.php?id=<?php echo $_GET["id"] ?>&date=' + $('#giornoProiezioni').val();
         }
     <?php } ?>
 </script>
