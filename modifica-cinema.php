@@ -119,4 +119,28 @@ if(isset($_POST["add"])){
     $_SESSION["success"] = "Cinema eliminato con successo";
     header("Location: gestisci-tutti-cinema.php");
     exit();
+}elseif (isset($_POST["modificaProiezione"])){
+    $id = $_POST["id"];
+    $oraInizio = $_POST["oraInizio"];
+    $privata = $_POST["privata"];
+    $idSala = $_POST["idSala"];
+    $idFilm = $_POST["idFilm"];
+    echo $privata;
+    echo $idSala;
+    if(empty($id) || empty($oraInizio) || empty($privata) || empty($idSala) || empty($idFilm)){
+        $_SESSION["error"] = "Errore nell'inserimento dei dati";
+        http_response_code(400);
+        exit();
+    }
+    $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
+    or die("Errore di connessione al database");
+    $query = "UPDATE Proiezioni SET OraInizio = '$oraInizio', Privata = " . ($privata == "on" ? 1 : 0) . ", idFSala = '$idSala', idFFilm = '$idFilm' WHERE IDProiezione = '$id'";
+    $result = mysqli_query($connessione, $query);
+    if(!$result){
+        $_SESSION["error"] = "Errore nell'aggiornamento della proiezione";
+        http_response_code(400);
+        exit();
+    }
+    $_SESSION["success"] = "Proiezione aggiornata con successo";
+    exit();
 }
