@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="Media/fontawesome/css/all.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
-    <title>Aggiungi cinema - Multisala</title>
+    <title><?php if(isset($_GET["id"])) echo "Modifica"; else echo "Aggiungi"; ?> cinema - Multisala</title>
     <style>
         .grd{
             display: grid;
@@ -50,9 +50,9 @@ if(isset($_GET["id"])){
 }
 ?>
 <?php include "navbar.php" ?>
-<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi cinema</p>
+<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i><?php if(isset($_GET["id"])) echo "Modifica"; else echo "Aggiungi"; ?> cinema</p>
 <a href="gestisci-tutti-cinema.php" class="btn btn-outline-dark m-3 mb-5" style="width: 15%"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
-<div class="w-75 m-auto">
+<div class="w-75 m-auto pb-5">
     <form action="modifica-cinema.php" method="post">
         <?php
         if(!isset($_GET["id"])){
@@ -122,12 +122,13 @@ if(isset($_GET["id"])){
             $result = mysqli_query($connessione, $query)
             or die("Query fallita!");
             if(mysqli_num_rows($result) > 0){
-                while($row = mysqli_fetch_assoc($result)){?>
+                $sale = $result->fetch_all(MYSQLI_ASSOC);
+                for($i = 0; $i < count($sale); $i++){?>
                     <div class='list-group-item'>
-                        <?php echo $row["CodiceSala"];?>
+                        <?php echo $sale[$i]["CodiceSala"];?>
                         <div class='float-end'>
-                            <button class='btn btn-primary me-2' type='button' onclick='modSala("<?php echo $row["CodiceSala"];?>")'>Modifica</button>
-                            <button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale = sale.filter(s => s.codice != "<?php echo $row["CodiceSala"];?>");'><i class="fa-solid fa-xmark-large"></i></button>
+                            <button class='btn btn-primary me-2' type='button' onclick='modSala("<?php echo $sale[$i]["CodiceSala"];?>")'>Modifica</button>
+                            <button class='btn btn-danger' type='button' onclick='this.parentElement.parentElement.remove();sale = sale.filter(s => s.codice != "<?php echo $sale[$i]["CodiceSala"];?>");'><i class="fa-solid fa-xmark-large"></i></button>
                         </div>
                     </div>
                 <?php
@@ -136,6 +137,73 @@ if(isset($_GET["id"])){
         }
         ?>
     </div>
+    <?php if(isset($_GET["id"])){?>
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped table-hover caption-top mb-1">
+            <thead class="table-dark">
+                <tr><td colspan="25" class="text-center fw-bold">Orari</td></tr>
+                <tr>
+                    <th>Sala</th>
+                    <?php
+                        $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDSala, CodiceSala, OraInizio, Durata, Privata FROM ((Proiezioni AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala) INNER JOIN Cinema AS C ON S.idFCinema = C.IDCinema) INNER JOIN Film AS F ON P.idFFilm = F.IDFilm WHERE GETSTARTWEEKDATE(now()) = GETSTARTWEEKDATE(OraInizio) AND C.IDCinema = '".$_GET["id"]."' ORDER BY CodiceSala, OraInizio");
+                        $film = $result->fetch_all(MYSQLI_ASSOC);
+                        for($i = 0; $i < 24; $i++){
+                            echo "<th>". ($i + 1) ."</th>";
+                        }
+                    ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $colors = array("#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400");
+                    $csala = "";
+                    $f = 0;
+                    //TODO: Finire di scrivere gli orari (risolvere errore di scorrimento della sala) e gestire programmazione settimanale
+                    for($i = 0; $i < count($sale); $i++){
+                        if($csala != $sale[$i]["CodiceSala"]){
+                            if($i != 0){
+                                echo "</tr>";
+                            }
+                            echo "<tr>";
+                            echo "<td>".$sale[$i]["CodiceSala"]."</td>";
+                            $csala = $sale[$i]["CodiceSala"];
+                        }
+                        for($j = 1; $j <= 24; $j++){
+                            if(!isset($film[$f]) || $film[$f]["CodiceSala"] != $csala) {
+                                echo "<td></td>";
+                                continue;
+                            }
+                            $dataFilm = new DateTime($film[$f]["OraInizio"]);
+                            $dataFilm->modify("+".round($dataFilm->format("i"))." minutes");
+                            $orainizio = round(date("H", $dataFilm->getTimestamp()));
+                            $durata = round($film[$f]["Durata"] / 60);
+                            if($j == $orainizio){
+                                $fcolor = $colors[$j / 2];
+                                $fcolor = hexdec(substr($fcolor, 1, 2)) + hexdec(substr($fcolor, 3, 2)) + hexdec(substr($fcolor, 5, 2));
+                                if($fcolor > 500){
+                                    $fcolor = "#000";
+                                }else{
+                                    $fcolor = "#fff";
+                                }
+                                echo "<td colspan='$durata' id='proiezione-" . $film[$f]["IDProiezione"] . "' onclick='modificaProiezione(" . $film[$f]["IDProiezione"] . ")' style='cursor: pointer; text-align: center; background: " . $colors[$j/2] . "; color: $fcolor'>".$film[$f]["NomeFilm"]."</td>";
+                                $j += $durata - 1;
+                                if($f + 1 < count($film)){
+                                    $f++;
+                                }
+                            }elseif($j > $orainizio + $durata || $j <= $orainizio){
+                                echo "<td></td>";
+                            }
+                        }
+                    }
+                    $query = "SELECT * FROM Film ORDER BY NomeFilm";
+                    $result = $connessione->query($query);
+                    $films = $result->fetch_all(MYSQLI_ASSOC);
+                    ?>
+            </tbody>
+        </table>
+        <button class="btn btn-primary float-end" onclick="aggiungiProiezione()"><i class="fa-solid fa-plus-large"></i></button>
+    </div>
+    <?php } ?>
     <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaCinema()"; else echo "location.href='gestisci-tutti-cinema.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
     <button class="btn btn-primary float-end" onclick="checkForm()">Salva</button>
 </div>
@@ -180,6 +248,60 @@ if(isset($_GET["id"])){
                     </div>
                     <div id="graficoPosti" class="m-1 mx-auto"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="modificaProiezione">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifica proiezione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="alert alert-danger d-none" role="alert" id="alertProiezione">
+                        L'ora di fine della proiezione non può essere sovrapposta a quella di inizio di un'altra.
+                    </div>
+                    <input type="hidden" name="idProiezione" id="idProiezione">
+                    <div id="listaFilm" class="form-floating mb-3">
+                        <select class="form-control" aria-label="Film" id="filmProiezione">
+                            <option value="" selected disabled>Film</option>
+                            <?php
+                            for ($i = 0; $i < count($films); $i++) {
+                                echo "<option value='" . $films[$i]['IDFilm'] . "'>" . $films[$i]['NomeFilm'] . " (" . $films[$i]["Durata"] . "min)</option>";
+                            }
+                            ?>
+                        </select>
+                        <label for="filmProiezione">Film</label>
+                    </div>
+                    <div id="listaSale" class="form-floating mb-3">
+                        <select class="form-control" aria-label="Sala" id="salaProiezione">
+                            <option value="" selected disabled>Sala</option>
+                            <?php
+                            for ($i = 0; $i < count($sale); $i++) {
+                                echo "<option value='" . $sale[$i]['IDSala'] . "'>" . $sale[$i]['CodiceSala'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                        <label for="salaProiezione">Sala</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" class="form-control" placeholder="Ora inizio" id="dataProiezione" onchange="impostaOraFineProiezione()" required>
+                        <label for="dataProiezione">Ora inizio</label>
+                        <div class="invalid-feedback">L'ora di inizio non può essere vuota.</div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" class="form-control" placeholder="Ora fine" id="oraFineProiezione" readonly>
+                        <label for="oraFineProiezione">Ora fine</label>
+                    </div>
+                    <p><input type="checkbox" id="proiezionePrivata"><label for="proiezionePrivata" class="ms-2">Privata</label></p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annulla</button>
+                <button type="button" class="btn btn-primary" onclick="salvaModificheProiezione()">Salva</button>
             </div>
         </div>
     </div>
@@ -507,6 +629,93 @@ if(isset($_GET["id"])){
             form.appendChild(input2);
             document.body.appendChild(form);
             form.submit();
+        }
+        let films = [];
+        let proiezioni = [];
+        <?php
+        echo "films = " . json_encode($films) . ";";
+        echo "proiezioni = " . json_encode($film) . ";";
+        ?>
+        function modificaProiezione(id){
+            $("#modificaProiezione").modal("show");
+            $('#idProiezione').val(id);
+            let proiezione = proiezioni.filter(p => p.IDProiezione == id)[0];
+            $('#proiezionePrivata').attr("checked", proiezione.Privata != 0);
+            $('#filmProiezione').val(proiezione.IDFilm);
+            $('#salaProiezione').val(proiezione.IDSala);
+            let oraInizio = new Date(proiezione.OraInizio);
+            oraInizio = new Date(oraInizio.getTime() - oraInizio.getTimezoneOffset() * 60000);
+            $('#dataProiezione').val(oraInizio.toISOString().split("Z")[0]);
+            impostaOraFineProiezione();
+        }
+        function salvaModificheProiezione(){
+            let dataProiezione = document.getElementById('dataProiezione');
+            let oraInizio = document.getElementById('filmProiezione');
+            let salaProiezione = document.getElementById('salaProiezione');
+            if(!dataProiezione.checkValidity()){
+                dataProiezione.classList.add("is-invalid");
+                return;
+            }
+            if(!oraInizio.checkValidity()){
+                oraInizio.classList.add("is-invalid");
+                return;
+            }
+            if(!salaProiezione.checkValidity()){
+                salaProiezione.classList.add("is-invalid");
+                return;
+            }
+            dataProiezione.classList.remove("is-invalid");
+            oraInizio.classList.remove("is-invalid");
+            salaProiezione.classList.remove("is-invalid");
+            let valid = true;
+            let dtf = new Date($('#oraFineProiezione').val());
+            let dti = new Date(dataProiezione.value);
+            for (let i = 0; i < proiezioni.length; i++) {
+                if(proiezioni[i].IDProiezione != $('#idProiezione').val() && proiezioni[i].IDSala == salaProiezione.value){
+                    let dti2 = new Date(proiezioni[i].OraInizio);
+                    let film = films.filter(f => f.IDFilm == proiezioni[i].IDFilm)[0];
+                    let dtf2 = new Date(dti2.getTime() + film.Durata * 60000);
+                    if(dti2.getTime() > dti.getTime() && dti2.getTime() < dtf.getTime()){
+                        valid = false;
+                        break;
+                    }
+                    else if(dtf2.getTime() > dti.getTime() && dtf2.getTime() < dtf.getTime()){
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+            if(!valid){
+                $('#alertProiezione').removeClass("d-none");
+                setTimeout(() => $('#alertProiezione').addClass("d-none"), 5000);
+                return;
+            }
+            $.post("modifica-cinema.php", {
+                id: $('#idProiezione').val(),
+                idFilm: $('#filmProiezione').val(),
+                idSala: $('#salaProiezione').val(),
+                oraInizio: $('#dataProiezione').val(),
+                privata: $('#proiezionePrivata').prop("checked"),
+                modificaProiezione: true
+            }, function(data){
+                location.reload();
+            });
+        }
+        function impostaOraFineProiezione(){
+            let oraInizio = new Date($("#dataProiezione").val());
+            let film = films.filter(film => film.IDFilm == $('#filmProiezione').val())[0];
+            let oraFine = new Date(oraInizio.getTime() + film.Durata * 60000 - oraInizio.getTimezoneOffset() * 60000);
+            $("#oraFineProiezione").val(oraFine.toISOString().split("Z")[0]);
+        }
+        function aggiungiProiezione(){
+            $('#modificaProiezione').modal('show');
+            $('#idProiezione').val("");
+            $('#filmProiezione').val("");
+            $('#salaProiezione').val("");
+            $('#dataProiezione').val("");
+            $('#oraFineProiezione').val("");
+            $('#proiezionePrivata').prop("checked", false);
+            $('#alertProiezione').addClass("d-none");
         }
     <?php } ?>
 </script>
