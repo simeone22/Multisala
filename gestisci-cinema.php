@@ -704,16 +704,28 @@ if(isset($_GET["id"])){
                 setTimeout(() => $('#alertProiezione').addClass("d-none"), 5000);
                 return;
             }
-            $.post("modifica-cinema.php", {
-                id: $('#idProiezione').val(),
-                idFilm: $('#filmProiezione').val(),
-                idSala: $('#salaProiezione').val(),
-                oraInizio: $('#dataProiezione').val(),
-                privata: $('#proiezionePrivata').prop("checked"),
-                modificaProiezione: true
-            }, function(data){
-                location.reload();
-            });
+            if($('#idProiezione').val() == ""){
+                $.post("modifica-cinema.php", {
+                    idFilm: $('#filmProiezione').val(),
+                    idSala: $('#salaProiezione').val(),
+                    oraInizio: $('#dataProiezione').val(),
+                    privata: $('#proiezionePrivata').prop("checked"),
+                    aggiungiProiezione: true
+                }, function (data) {
+                    location.reload();
+                });
+            }else {
+                $.post("modifica-cinema.php", {
+                    id: $('#idProiezione').val(),
+                    idFilm: $('#filmProiezione').val(),
+                    idSala: $('#salaProiezione').val(),
+                    oraInizio: $('#dataProiezione').val(),
+                    privata: $('#proiezionePrivata').prop("checked"),
+                    modificaProiezione: true
+                }, function (data) {
+                    location.reload();
+                });
+            }
         }
         function impostaOraFineProiezione(){
             let oraInizio = new Date($("#dataProiezione").val());
