@@ -151,7 +151,7 @@ if(isset($_GET["id"])){
         </div>
         <table class="table table-bordered table-striped table-hover caption-top mb-1">
             <thead class="table-dark">
-                <tr><td colspan="25" class="text-center fw-bold">Orari</td></tr>
+                <tr><td colspan="25" class="text-center fw-bold"><i class="fa-solid fa-projector me-2"></i>Proiezioni</td></tr>
                 <tr>
                     <th>Sala</th>
                     <?php
@@ -266,7 +266,7 @@ if(isset($_GET["id"])){
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Modifica proiezione</h5>
+                <h5 class="modal-title">Proiezione</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -276,7 +276,7 @@ if(isset($_GET["id"])){
                     </div>
                     <input type="hidden" name="idProiezione" id="idProiezione">
                     <div id="listaFilm" class="form-floating mb-3">
-                        <select class="form-control" aria-label="Film" id="filmProiezione">
+                        <select class="form-control" aria-label="Film" id="filmProiezione" onchange="impostaOraFineProiezione()" required>
                             <option value="" selected disabled>Film</option>
                             <?php
                             for ($i = 0; $i < count($films); $i++) {
@@ -287,7 +287,7 @@ if(isset($_GET["id"])){
                         <label for="filmProiezione">Film</label>
                     </div>
                     <div id="listaSale" class="form-floating mb-3">
-                        <select class="form-control" aria-label="Sala" id="salaProiezione">
+                        <select class="form-control" aria-label="Sala" id="salaProiezione" required>
                             <option value="" selected disabled>Sala</option>
                             <?php
                             for ($i = 0; $i < count($sale); $i++) {
@@ -302,12 +302,18 @@ if(isset($_GET["id"])){
                         <label for="dataProiezione">Ora inizio</label>
                         <div class="invalid-feedback">L'ora di inizio non può essere vuota e non può essere più recente di adesso.</div>
                     </div>
+                    <div class="form-floating mb-3 d-none">
+                        <input type="time" class="form-control" placeholder="Ora inizio" id="oraProiezione" onchange="impostaOraFineProiezione()" required>
+                        <label for="dataProiezione">Ora inizio</label>
+                        <div class="invalid-feedback">L'ora di inizio non può essere vuota e non può essere più recente di adesso.</div>
+                    </div>
                     <div class="form-floating mb-3">
                         <input type="datetime-local" class="form-control" placeholder="Ora fine" id="oraFineProiezione" readonly>
                         <label for="oraFineProiezione">Ora fine</label>
                     </div>
                     <p><input type="checkbox" id="proiezionePrivata"><label for="proiezionePrivata" class="ms-2">Privata</label></p>
                 </form>
+                <button type="button" class="btn btn-danger d-none" onclick="eliminaProiezione()" id="eliminaProiezione">Elimina</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annulla</button>
@@ -352,6 +358,9 @@ if(isset($_GET["id"])){
             $("#nuovoCodiceSala").val(codsala);
             $("#rigaPosto").val("");
             $("#colonnaPosto").val("");
+            $("#oraProiezione").parent().addClass("d-none");
+            $("#dataProiezione").parent().removeClass("d-none");
+            $("#eliminaProiezione").removeClass("d-none");
             let sala = sale.filter(s => s.codice == codsala)[0];
             document.getElementById('graficoPosti').innerHTML = "";
             for (let i = 0; i < sala.posti.length; i++) {
@@ -468,6 +477,9 @@ if(isset($_GET["id"])){
             $('#nuovoCodiceSala').val(sala.codice);
             $("#rigaPosto").val("");
             $("#colonnaPosto").val("");
+            $("#oraProiezione").parent().addClass("d-none");
+            $("#dataProiezione").parent().removeClass("d-none");
+            $("#eliminaProiezione").removeClass("d-none");
             document.getElementById('graficoPosti').innerHTML = "";
             for (let i = 0; i < sala.posti.length; i++) {
                 genPosto(sala, sala.posti[i]);
@@ -656,18 +668,24 @@ if(isset($_GET["id"])){
             let oraInizio = new Date(proiezione.OraInizio);
             oraInizio = new Date(oraInizio.getTime() - oraInizio.getTimezoneOffset() * 60000);
             $('#dataProiezione').val(oraInizio.toISOString().split("Z")[0]);
+            $("#oraProiezione").parent().addClass("d-none");
+            $("#dataProiezione").parent().removeClass("d-none");
+            $("#eliminaProiezione").removeClass("d-none");
             impostaOraFineProiezione();
         }
         function salvaModificheProiezione(){
             let dataProiezione = document.getElementById('dataProiezione');
-            let oraInizio = document.getElementById('filmProiezione');
+            if($('#idProiezione').val() == ""){
+                dataProiezione = document.getElementById('oraProiezione');
+            }
+            let film = document.getElementById('filmProiezione');
             let salaProiezione = document.getElementById('salaProiezione');
             if(!dataProiezione.checkValidity()){
                 dataProiezione.classList.add("is-invalid");
                 return;
             }
-            if(!oraInizio.checkValidity()){
-                oraInizio.classList.add("is-invalid");
+            if(!film.checkValidity()){
+                film.classList.add("is-invalid");
                 return;
             }
             if(!salaProiezione.checkValidity()){
@@ -675,13 +693,24 @@ if(isset($_GET["id"])){
                 return;
             }
             dataProiezione.classList.remove("is-invalid");
-            oraInizio.classList.remove("is-invalid");
+            film.classList.remove("is-invalid");
             salaProiezione.classList.remove("is-invalid");
             let valid = true;
             let dtf = new Date($('#oraFineProiezione').val());
-            let dti = new Date(dataProiezione.value);
+            let dti;
+            if($('#idProiezione').val() == ""){
+                dti = new Date();
+                let splitHour = $('#oraProiezione').val().split(":");
+                dti.setHours(splitHour[0]);
+                dti.setMinutes(splitHour[1]);
+                dti.setSeconds(0);
+                dti.setMilliseconds(0);
+            }else{
+                dti = new Date(dataProiezione.value);
+            }
             for (let i = 0; i < proiezioni.length; i++) {
-                if(proiezioni[i].IDProiezione != $('#idProiezione').val()){
+                console.log(new Date() > dti);
+                if($('#idProiezione').val() != "" && proiezioni[i].IDProiezione != $('#idProiezione').val()){
                     if(proiezioni[i].IDSala == salaProiezione.value) {
                         let dti2 = new Date(proiezioni[i].OraInizio);
                         let film = films.filter(f => f.IDFilm == proiezioni[i].IDFilm)[0];
@@ -699,6 +728,10 @@ if(isset($_GET["id"])){
                     return;
                 }
             }
+            if(new Date() > dti){
+                dataProiezione.classList.add("is-invalid");
+                return;
+            }
             if(!valid){
                 $('#alertProiezione').removeClass("d-none");
                 setTimeout(() => $('#alertProiezione').addClass("d-none"), 5000);
@@ -708,7 +741,7 @@ if(isset($_GET["id"])){
                 $.post("modifica-cinema.php", {
                     idFilm: $('#filmProiezione').val(),
                     idSala: $('#salaProiezione').val(),
-                    oraInizio: $('#dataProiezione').val(),
+                    oraInizio: new Date(dti.getTime() - dti.getTimezoneOffset() * 60000).toISOString().split("Z")[0],
                     privata: $('#proiezionePrivata').prop("checked"),
                     aggiungiProiezione: true
                 }, function (data) {
@@ -728,7 +761,17 @@ if(isset($_GET["id"])){
             }
         }
         function impostaOraFineProiezione(){
-            let oraInizio = new Date($("#dataProiezione").val());
+            let oraInizio;
+            if($('#idProiezione').val() == ""){
+                oraInizio = new Date();
+                let splitHour = $('#oraProiezione').val().split(":");
+                oraInizio.setHours(splitHour[0]);
+                oraInizio.setMinutes(splitHour[1]);
+                oraInizio.setSeconds(0);
+                oraInizio.setMilliseconds(0);
+            }else{
+                oraInizio = new Date($("#dataProiezione").val());
+            }
             let film = films.filter(film => film.IDFilm == $('#filmProiezione').val())[0];
             let oraFine = new Date(oraInizio.getTime() + film.Durata * 60000 - oraInizio.getTimezoneOffset() * 60000);
             $("#oraFineProiezione").val(oraFine.toISOString().split("Z")[0]);
@@ -739,12 +782,24 @@ if(isset($_GET["id"])){
             $('#filmProiezione').val("");
             $('#salaProiezione').val("");
             $('#dataProiezione').val("");
+            $('#oraProiezione').val("");
             $('#oraFineProiezione').val("");
             $('#proiezionePrivata').prop("checked", false);
             $('#alertProiezione').addClass("d-none");
+            $("#oraProiezione").parent().removeClass("d-none");
+            $("#dataProiezione").parent().addClass("d-none");
+            $("#eliminaProiezione").addClass("d-none");
         }
         function impostaGiornoProiezioni(){
             location.href='gestisci-cinema.php?id=<?php echo $_GET["id"] ?>&date=' + $('#giornoProiezioni').val();
+        }
+        function eliminaProiezione(){
+            $.post("modifica-cinema.php", {
+                id: $('#idProiezione').val(),
+                eliminaProiezione: true
+            }, function (data) {
+                location.reload();
+            });
         }
     <?php } ?>
 </script>

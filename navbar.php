@@ -56,9 +56,6 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                                 <a class="dropdown-item" href="gestisci-tutti-film.php"><i class="fa-solid fa-films me-2"></i>Film</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="gestisci-proiezioni.php"><i class="fa-solid fa-projector me-2"></i>Proiezioni</a>
-                            </li>
-                            <li>
                                 <a class="dropdown-item" href="gestisci-responsabili.php"><i class="fa-solid fa-user-tie me-2"></i>Responsabili</a>
                             </li>
                             <li>
