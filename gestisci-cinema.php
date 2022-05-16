@@ -168,7 +168,6 @@ if(isset($_GET["id"])){
                     $colors = array("#16a085", "#27ae60", "#2980b9", "#8e44ad", "#2c3e50", "#f1c40f", "#e67e22", "#e74c3c", "#ecf0f1", "#95a5a6", "#f39c12", "#d35400");
                     $csala = "";
                     $f = 0;
-                    //TODO: Finire di scrivere gli orari (risolvere errore di scorrimento della sala) e gestire programmazione settimanale
                     for($i = 0; $i < count($sale); $i++){
                         if($csala != $sale[$i]["CodiceSala"]){
                             if($i != 0){
