@@ -22,6 +22,13 @@ if(isset($_POST["add"])){
         header("Location: gestisci-tutti-film.php");
         exit();
     }
+    if($_FILES["immagine"]){
+        if(copy($_FILES["immagine"]["tmp_name"], "Media/Film/" . $connessione->insert_id . ".png")){
+            $_SESSION["error"] = "Errore nell'inserimento dell'immagine";
+            header("Location: gestisci-tutti-film.php");
+            exit();
+        }
+    }
     $_SESSION["success"] = "Film inserito con successo";
     header("Location: gestisci-tutti-film.php");
     exit();

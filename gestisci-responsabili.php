@@ -21,16 +21,94 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
 }
 $nome = "";
 $cognome = "";
-$indirizzo = "";
-$comune = "";
-$cap = "";
+$durata = "";
 $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
 or die("Connessione fallita: " . mysqli_connect_error());
-$resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 2")
-or die("Query fallita: " . mysqli_error($connessione));
+if(isset($_GET["id"])){
+    $result = mysqli_query($connessione, "SELECT * FROM Film WHERE IDFilm = " . $_GET["id"])
+    or die("Query fallita: " . mysqli_error($connessione));
+    $row = mysqli_fetch_array($result);
+    $nome = $row["NomeFilm"];
+    $trama = $row["Trama"];
+    $durata = $row["Durata"];
+}
 ?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-user-tie me-3"></i>Gestisci responsabili</p>
+<div class="w-75 m-auto">
+    <form action="modifica-film.php" method="post">
+        <?php
+        if(!isset($_GET["id"])){
+            echo "<input type='hidden' name='add' value='true'>";
+        }
+        ?>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="nome" placeholder="Nome del film" id="nome" value="<?php echo $nome?>" required>
+            <label for="nome">Nome del film</label>
+            <div class="invalid-feedback">Il nome del film non può essere vuoto.</div>
+        </div>
+        <div class="form-floating my-3">
+            <input class="form-control" placeholder="Trama" type="text" name="trama" id="trama" value="<?php echo $trama?>" required>
+            <label for="trama">Trama</label>
+            <div class="invalid-feedback">La trama non può essere vuota.</div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="durata" placeholder="durata" id="durata" value="<?php echo $durata?>" required>
+            <label for="durata">Durata</label>
+            <div class="invalid-feedback">Il film deve avere una durata.</div>
+        </div>
+    </form>
+    <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaFilm()"; else echo "location.href='gestisci-tutti-film.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
+    <button class="btn btn-primary float-end" onclick="checkForm()">Salva</button>
+</div>
 
+<script>
+    //TODO: generare in json php
+    function checkForm(){
+        let form = document.getElementsByTagName("form")[0]
+        let inputs = form.getElementsByTagName('input');
+        let valid = true;
+        for (let i = 0; i < inputs.length; i++){
+            if(!inputs[i].checkValidity()){
+                valid = false;
+                inputs[i].classList.add("is-invalid");
+            }else {
+                inputs[i].classList.remove("is-invalid");
+            }
+        }
+
+        if(valid) {
+            $.post("modifica-film.php", {
+                nome: document.getElementById("nome").value,
+                trama: document.getElementById("trama").value,
+                durata: document.getElementById("durata").value,
+                <?php if(!isset($_GET["id"])) { echo "add: true"; } else{ echo "edit: true, id: " . $_GET["id"]; } ?>
+            }, function (data, status) {
+                location.href = "gestisci-tutti-film.php";
+            });
+        }
+    }
+    <?php
+    if(isset($_GET["id"])){?>
+    function eliminaFilm(){
+        let form = document.createElement("form");
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", "modifica-film.php");
+        form.classList.add("d-none");
+        let input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", "id");
+        input.setAttribute("value", <?php echo $_GET["id"]; ?>);
+        form.appendChild(input);
+        let input2 = document.createElement("input");
+        input2.setAttribute("type", "hidden");
+        input2.setAttribute("name", "elimina");
+        input2.setAttribute("value", "true");
+        form.appendChild(input2);
+        document.body.appendChild(form);
+        form.submit();
+    }
+    <?php } ?>
+</script>
 </body>
 </html>

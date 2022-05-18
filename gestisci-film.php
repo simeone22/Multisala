@@ -20,39 +20,54 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
     exit();
 }
 $nome = "";
-$indirizzo = "";
-$comune = "";
-$cap = "";
+$trama = "";
+$durata = "";
 $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
 or die("Connessione fallita: " . mysqli_connect_error());
-$resps = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 1")
-or die("Query fallita: " . mysqli_error($connessione));
 if(isset($_GET["id"])){
-
+    $result = mysqli_query($connessione, "SELECT * FROM Film WHERE IDFilm = " . $_GET["id"])
+    or die("Query fallita: " . mysqli_error($connessione));
+    $row = mysqli_fetch_array($result);
+    $nome = $row["NomeFilm"];
+    $trama = $row["Trama"];
+    $durata = $row["Durata"];
 }
 ?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi film</p>
 <a href="gestisci-tutti-film.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
-<div class="w-75 m-auto">
+<div class="w-75 m-auto mb-5">
     <form action="modifica-film.php" method="post">
         <?php
         if(!isset($_GET["id"])){
             echo "<input type='hidden' name='add' value='true'>";
         }
         ?>
+        <div>
+            <img src="Media/Film/<?php
+            if(isset($_GET["id"])){
+                echo $_GET["id"];
+            }else {
+                echo "default";
+            }
+            ?>.png" class="mb-3 w-25 mx-auto d-block" id="imgCop">
+        </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="nome" placeholder="Nome del film" id="nome" required>
+            <input type="file" class="form-control" name="immagine" placeholder="Copertina" id="immagine" accept="image/png">
+            <label for="immagine">Copertina</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="nome" placeholder="Nome del film" id="nome" value="<?php echo $nome?>" required>
             <label for="nome">Nome del film</label>
             <div class="invalid-feedback">Il nome del film non può essere vuoto.</div>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" placeholder="Trama" type="text" name="trama" id="trama" required>
+            <textarea class="form-control" placeholder="Trama" type="text" name="trama" id="trama" style="height: 310px;" required><?php echo $trama?></textarea>
             <label for="trama">Trama</label>
             <div class="invalid-feedback">La trama non può essere vuota.</div>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="durata" placeholder="durata" id="durata" required>
+            <input type="number" class="form-control" name="durata" placeholder="durata" id="durata" value="<?php echo $durata?>" required>
             <label for="durata">Durata</label>
             <div class="invalid-feedback">Il film deve avere una durata.</div>
         </div>
@@ -62,12 +77,20 @@ if(isset($_GET["id"])){
 </div>
 
 <script>
+    let immagineUp = document.getElementById('immagine');
+    immagineUp.onchange = evt => {
+        const [file] = immagineUp.files;
+        if(file){
+            document.getElementById('imgCop').src = URL.createObjectURL(file);
+        }
+    }
     //TODO: generare in json php
     function checkForm(){
         let form = document.getElementsByTagName("form")[0]
         let inputs = form.getElementsByTagName('input');
         let valid = true;
         for (let i = 0; i < inputs.length; i++){
+            if (inputs[i].type == 'file') continue;
             if(!inputs[i].checkValidity()){
                 valid = false;
                 inputs[i].classList.add("is-invalid");
