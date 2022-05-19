@@ -21,5 +21,60 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
 }
 ?>
 <?php include "navbar.php" ?>
+<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-ticket me-3"></i>Prenotazioni</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Film</th>
+                    <th scope="col">Ora inizio</th>
+                    <th scope="col">Cinema</th>
+                    <th scope="col">Sala</th>
+                    <th scope="col">Posto</th>
+                    <th scope="col">Data prenotazione</th>
+                    <th scope="col">Scarica</th>
+                    <th scope="col">Cancella</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+                or die("Errore di connessione al database");
+                $query = "SELECT IDPrenotazione, DataPrenotazione, NomeFilm, Indirizzo, Comune, CAP, NomeCinema, CodiceSala, Riga, Colonna, OraInizio FROM (((((Prenotazioni AS P INNER JOIN Proiezioni AS PR ON P.idFProiezione = PR.IDProiezione) INNER JOIN Film AS F ON F.IDFilm = PR.idFFilm) INNER JOIN Sale AS S ON S.IDSala = PR.idFSala) INNER JOIN Cinema AS C ON C.IDCinema = S.idFCinema) INNER JOIN Posti AS PO ON PO.IDPosto = P.idFPosto) INNER JOIN Utenti AS U ON U.IDUtente = P.idFUtente WHERE U.Username = '".$_SESSION["username"]."'";
+                $result = mysqli_query($connessione, $query);
+                if(!$result){
+                    echo "<p class='fs-1 bg-warning text-center w-100'>Non ci sono prenotazioni</p>";
+                }
+                elseif($result->num_rows == 0){
+                    echo "<p class='fs-1 bg-warning text-center w-100'>Non ci sono prenotazioni</p>";
+                }
+                else{
+                    while($row = $result->fetch_assoc()){
+                        echo "<tr>";
+                        echo "<th scope='row'>".$row["IDPrenotazione"]."</th>";
+                        echo "<td>".$row["NomeFilm"]."</td>";
+                        echo "<td>".(new DateTime($row["OraInizio"]))->format("H:i d/m/Y")."</td>";
+                        echo "<td>".$row["NomeCinema"]. " (" . $row["Indirizzo"] . ", " . $row["Comune"] . ", " . $row["CAP"] . ")</td>";
+                        echo "<td>".$row["CodiceSala"]."</td>";
+                        echo "<td>".$row["Riga"].$row["Colonna"]."</td>";
+                        echo "<td>".(new DateTime($row["DataPrenotazione"]))->format("H:i d/m/Y")."</td>";
+                        echo "<td><a target='_blank' href='modifica-prenotazione.php?action=download&id=".$row["IDPrenotazione"]."' class='btn btn-primary'><i class='fa-solid fa-download me-2'></i>Scarica codice</a></td>";
+                        echo "<td><a href='modifica-prenotazione.php?action=delete&id=".$row["IDPrenotazione"]."' class='btn btn-danger";
+                        if(new DateTime() > new DateTime($row["OraInizio"])){
+                            echo " disabled";
+                        }
+                        echo "'><i class='fa-solid fa-xmark-large me-2'></i>Cancella</a></td>";
+                        echo "</tr>";
+                    }
+                }
+                ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>
