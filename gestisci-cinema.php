@@ -653,9 +653,13 @@ if(isset($_GET["id"])){
         }
         let films = [];
         let proiezioni = [];
+        let dataCont;
         <?php
         echo "films = " . json_encode($films) . ";";
         echo "proiezioni = " . json_encode($film) . ";";
+        if(isset($_GET["date"])){
+            echo "dataCont = " . json_encode($_GET["date"]) . ";";
+        }
         ?>
         function modificaProiezione(id){
             $("#modificaProiezione").modal("show");
@@ -698,7 +702,8 @@ if(isset($_GET["id"])){
             let dtf = new Date($('#oraFineProiezione').val());
             let dti;
             if($('#idProiezione').val() == ""){
-                dti = new Date();
+                if(dataCont == undefined) dti = new Date();
+                else dti = new Date(dataCont);
                 let splitHour = $('#oraProiezione').val().split(":");
                 dti.setHours(splitHour[0]);
                 dti.setMinutes(splitHour[1]);
@@ -708,7 +713,6 @@ if(isset($_GET["id"])){
                 dti = new Date(dataProiezione.value);
             }
             for (let i = 0; i < proiezioni.length; i++) {
-                console.log(new Date() > dti);
                 if($('#idProiezione').val() != "" && proiezioni[i].IDProiezione != $('#idProiezione').val()){
                     if(proiezioni[i].IDSala == salaProiezione.value) {
                         let dti2 = new Date(proiezioni[i].OraInizio);
@@ -762,7 +766,8 @@ if(isset($_GET["id"])){
         function impostaOraFineProiezione(){
             let oraInizio;
             if($('#idProiezione').val() == ""){
-                oraInizio = new Date();
+                if(dataCont == undefined) oraInizio = new Date();
+                else oraInizio = new Date(dataCont);
                 let splitHour = $('#oraProiezione').val().split(":");
                 oraInizio.setHours(splitHour[0]);
                 oraInizio.setMinutes(splitHour[1]);

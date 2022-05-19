@@ -46,7 +46,7 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                         </li>
                         <?php }elseif($_SESSION["tipoutente"] == 2){?>
                         <li>
-                            <a class="dropdown-item" href="visualizza-statistiche.php"><i class="fa-solid fa-chart-line-up me-2"></i>Statistiche</a>
+                            <a class="dropdown-item" href="statistiche.php"><i class="fa-solid fa-chart-line-up me-2"></i>Statistiche</a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="controlla-biglietti.php"><i class="fa-solid fa-clipboard-check me-2"></i>Controlla biglietti</a>

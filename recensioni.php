@@ -21,5 +21,62 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
 }
 ?>
 <?php include "navbar.php" ?>
+<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-star me-3"></i>Recensioni</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Recensioni</h5>
+                </div>
+                <div class="card-body">
+                    <?php
+                    $query = "SELECT * FROM Recensioni AS R INNER JOIN Utenti AS U ON R.idFUtente = U.IDUtente WHERE Username = '".$_SESSION["username"]."'";
+                    $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322);
+                    $result = $connessione->query($query);
+                    if($result->num_rows > 0){
+                        while($row = $result->fetch_assoc()){
+                            $id_recensione = $row["IDRecensione"];
+                            $id_film = $row["idFFilm"];
+                            $id_utente = $row["idFUtente"];
+                            $voto = $row["Voto"];
+                            $commento = $row["Testo"];
+                            echo "<div class=\"row\">
+                                    <div class=\"col-12\">
+                                        <div class=\"card\">
+                                            <div class=\"card-body\">
+                                                <div class=\"row\">
+                                                    <div class=\"col-12 col-md-4\">
+                                                        <p class=\"card-text\">Voto: $voto</p>
+                                                    </div>
+                                                    <div class=\"col-12 col-md-8\">
+                                                        <p class=\"card-text\">$commento</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=\"card-footer\">
+                                                <div class=\"row\">
+                                                    <div class=\"col-12 col-md-4\">
+                                                        <a href=\"recensione.php?id_recensione=$id_recensione\" class=\"btn btn-primary\">Visualizza</a>
+                                                    </div>
+                                                    <div class=\"col-12 col-md-4\">
+                                                        <a href=\"modificarecensione.php?id_recensione=$id_recensione\" class=\"btn btn-primary\">Modifica</a>
+                                                    </div>
+                                                    <div class=\"col-12 col-md-4\">
+                                                        <a href=\"eliminarecensione.php?id_recensione=$id_recensione\" class=\"btn btn-primary\">Elimina</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>";
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
