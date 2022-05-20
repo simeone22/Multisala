@@ -27,7 +27,17 @@ if($_GET["action"] == "delete"){
 elseif ($_GET["action"] == "download"){
     include "Media/phpqrcode/qrlib.php";
     $filepath = getcwd() . "/Media/QR/" . $_GET["id"] . ".png";
-    QRcode::png(md5($_GET["id"] . $_SESSION["username"]), $filepath);
+    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+    or die("Errore di connessione al database");
+    $query = "SELECT idFCinema FROM (Prenotazioni AS PR INNER JOIN Proiezioni PO ON PR.idFProiezione = PO.IDProiezione) INNER JOIN Sale AS S ON S.IDSala = PO.idFSala WHERE IDPrenotazione = ".$_GET["id"];
+    $result = mysqli_query($connessione, $query);
+    if($result->num_rows == 0){
+        $_SESSION["error"] = "Errore nella generazione del codice QR";
+        header("Location: prenotazioni.php");
+        exit();
+    }
+    $row = mysqli_fetch_assoc($result);
+    QRcode::png($row["idFCinema"]."/".md5($_GET["id"] . $_SESSION["username"]), $filepath);
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');
     header('Content-Disposition: attachment; filename="'.basename($filepath).'"');
