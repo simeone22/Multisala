@@ -66,7 +66,7 @@ if(isset($_POST["add"])){
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
 
-    $query = "UPDATE Film SET NomeFilm = '$nome', Trama = '$trama', Durata = $durata WHERE IDFilm = $connessione->insert_id";
+    $query = "UPDATE Film SET NomeFilm = '$nome', Trama = '$trama', Durata = '$durata' WHERE IDFilm = '$connessione->insert_id'";
     $result = mysqli_query($connessione, $query);
 
     if(!$result){

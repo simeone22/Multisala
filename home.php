@@ -25,28 +25,102 @@
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php"; ?>
 <?php include "navbar.php" ?>
-    <div style="height:130%">
-        <div class="carousel slide" data-bs-ride="carousel" style="height: 75vh">
-            <div class="carousel-inner h-100">
-                <div class="carousel-item active h-100">
-                    <img class="d-block w-100" src="https://www.masisoft.it/immagini/thumb/xlarge/consulenza-informatica-ict-corporate-consulting.jpg" alt="Carosello immagini">
-                    <div class="carousel-caption">
-                        <h1></h1>
+    <div style="height:130%" class="container">
+        <div class="container text-center p-5">
+            <h1 class="display-4 fw-bold">Sedi multisala</h1>
+        </div>
+        <div class="container">
+            <hr class="featurette-divider">
+        </div>
+        <div style="padding-left: 30px">
+            <div class="row" style="width: 100%;">
+                <div class="col-sm-7" style="padding-bottom: 40px;">
+                    <div class="card border-secondary" style="width: 30rem;">
+                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img class="d-block" src="https://www.casaangelini.it/wp-content/uploads/2019/08/Dove-Andare-Cinema-Riccione-Cinepalace-Multisala-Centro.jpg" alt="..." style="width: 500px; height: 270px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Cinepalace
+                                <br>
+                                Riccione
+                            </h5>
+                            <hr class="featurette-divider">
+                            <p class="card-text">Viale Gramsci, 59 c, 47838</p>
+                        </div>
                     </div>
                 </div>
-                <div class="carousel-item h-100">
-                    <img class="d-block w-100" src="https://www.ganzsecurity.it/images/assistenza-tecnica.jpg" alt="Carosello immagini">
-                    <div class="carousel-caption">
-                        <h1></h1>
+                <div class="col-sm-5" style="padding-bottom: 40px;">
+                    <div class="card border-secondary" style="width: 30rem;">
+                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img class="d-block" src="https://zero-media.s3.amazonaws.com/uploads/2015/05/Eliseo-multisala-cinema-cultura-milano-film.jpg" alt="..." style="width: 500px; height: 270px;">
+                                </div>
+                                <div class="carousel-item">
+                                    <img class="d-block" src="https://www.riminitoday.it/~media/horizontal-hi/50118623643228/palacongressi-riccione-3.jpg" alt="..." style="width: 500px; height: 270px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Cinema Eliseo Multisala
+                                <br>
+                                Milano
+                            </h5>
+                            <hr class="featurette-divider">
+                            <p class="card-text">Via Torino, 64</p>
+                        </div>
                     </div>
                 </div>
-                <div class="carousel-item h-100">
-                    <img class="d-block w-100" src="https://www.cryptonetlabs.it/wp-content/uploads/2019/01/DefensiveOk1920px.jpg" alt="Carosello immagini">
-                    <div class="carousel-caption">
-                        <h1></h1>
+                <div class="col-sm-7" style="padding-bottom: 40px;">
+                    <div class="card border-secondary" style="width: 30rem;">
+                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img class="d-block" src="https://www.cinepark.it/cento/image/slide/serizio-bar-cinepark-cento.jpg" alt="..." style="width: 500px; height: 270px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Cinema Apollo
+                                <br>
+                                Comacchio
+                            </h5>
+                            <hr class="featurette-divider">
+                            <p class="card-text">Via Matteo Loves, 17</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5" style="padding-bottom: 40px;">
+                    <div class="card border-secondary" style="width: 30rem;">
+                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <img class="d-block" src="https://zero-media.s3.amazonaws.com/uploads/2015/06/Ducale-Multisala-Cinema-Milano-Cultura-Film.jpg" alt="..." style="width: 500px; height: 270px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                Cinema Ducale
+                                <br>
+                                Milano
+                            </h5>
+                            <hr class="featurette-divider">
+                            <p class="card-text">Piazza Napoli, 27</p>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="container">
+            <hr class="featurette-divider">
         </div>
     </div>
     <div class="px-5">

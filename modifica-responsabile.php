@@ -11,20 +11,20 @@ if (isset($_POST["add"])){
     $telefono = $_POST["telefono"];
     $dataNascita = $_POST["dataNascita"];
 
-  /*  if(empty($nome) || empty($cognome) || empty($email) || empty($codiceFiscale) || empty($telefono) || empty($dataNascita)){
+    if(empty($nome) || empty($cognome) || empty($email) || empty($codiceFiscale) || empty($telefono) || empty($dataNascita)){
         $_SESSION["error"] = "Compilare tutti i campi";
         http_response_code(403);
         exit();
     }
-*/
+
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
     $query = "INSERT INTO Utenti(Nome, Cognome, Email, CodiceFiscale, Telefono, DataNascita, idFRuolo) VALUES ('. $nome. ', '. $cognome. ', '. $email. ', '. $codiceFiscale. ', '. $telefono. ', '. $dataNascita. ',' . '$connessione->insert_id ' .')";
-    /*if(!mysqli_query($connessione, $query)){
+    if(!mysqli_query($connessione, $query)){
         $_SESSION["error"] = "Errore nell'inserimento delle credenziali" . $query;
         header("Location: gestisci-tutti-responsabili.php");
         exit();
-    }*/
+    }
 
     $_SESSION["success"] = "Responsabile inserito con successo";
     header("Location: gestisci-tutti-responsabili.php");

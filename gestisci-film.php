@@ -77,7 +77,7 @@ if(isset($_GET["id"])){
                 <?php
                 $sql = mysqli_query($connessione, "SELECT Nome, Cognome FROM Attori");
                 while($row = $sql->fetch_assoc()){?>
-                    <option value="<?php $_GET["id"]?>"><?php echo $row['Nome'] . ' ' . $row['Cognome']; ?></option>
+                    <option value="<?php ?>"><?php echo $row['Nome'] . ' ' . $row['Cognome']; ?></option>
                 <?php } ?>
                 <div class="invalid-feedback">Il film deve avere almeno un attore.</div>
             </select>
