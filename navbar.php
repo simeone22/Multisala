@@ -49,7 +49,7 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                             <a class="dropdown-item" href="statistiche.php"><i class="fa-solid fa-chart-line-up me-2"></i>Statistiche</a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="controlla-biglietti.php"><i class="fa-solid fa-clipboard-check me-2"></i>Controlla biglietti</a>
+                            <a class="dropdown-item" href="#controlla-biglietti" data-bs-toggle="offcanvas" role="button" aria-controls="controlla-biglietti"><i class="fa-solid fa-clipboard-check me-2"></i>Controlla biglietti</a>
                         </li>
                         <?php }else{?>
                             <li>
@@ -95,3 +95,75 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
         </div>
     </div>
 </nav>
+<?php
+if(isset($_SESSION["tipoutente"]) && $_SESSION["tipoutente"] == 2){?>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="controlla-biglietti" aria-labelledby="controlla-biglietti-label" style="width: 28%">
+    <div class="offcanvas-header">
+        <p class="offcanvas-title fs-5" id="controlla-biglietti-label"><i class="fa-solid fa-ticket me-3"></i>Controlla biglietti</p>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mx-auto mt-5">
+            <div style="width:500px;" id="reader"></div>
+        </div>
+        <!-- Mostra informazioni ultimo biglietto controllato -->
+        <div class="mx-auto mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Ultimo biglietto controllato</h5>
+                    <div class="card-text" id="infoBiglietto">
+                        <p class="card-text">Cinema: <span></span></p>
+                        <p class="card-text">Film: <span></span></p>
+                        <p class="card-text">Ora inizio: <span></span></p>
+                        <p class="card-text">Sala: <span></span></p>
+                        <p class="card-text">Posto: <span></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-absolute top-0 start-0 bg-light align-items-center justify-content-center w-100 h-100" id="cBanner" style="display: none">
+            <svg class="checkmark translate-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+        </div>
+        <div class="position-absolute top-0 start-0 bg-light align-items-center justify-content-center w-100 h-100" id="xBanner" style="display: none">
+            <svg class="xmark translate-middle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="xmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="xmark__X" fill="none" d="M16 16 36 36 M36 16 16 36"/>
+            </svg>
+        </div>
+        <script src="https://reeteshghimire.com.np/wp-content/uploads/2021/05/html5-qrcode.min_.js"></script>
+        <script type="text/javascript">
+            function onScanSuccess(qrCodeMessage) {
+                $.get("controlla-biglietto.php?codice=" + qrCodeMessage, (dt) => {
+                    console.log(dt);
+                    if(dt == "NO"){
+                        document.getElementById("xBanner").style.display = "flex";
+                        $("#xBanner").delay(2000).fadeOut(500);
+                        let p = document.getElementById("infoBiglietto").children;
+                        for (let i = 0; i < p.length; i++) {
+                            p[i].children[0].innerText = "";
+                        }
+                    }else {
+                        let data = JSON.parse(dt);
+                        document.getElementById("cBanner").style.display = "flex";
+                        $("#cBanner").delay(2000).fadeOut(500);
+                        let p = document.getElementById("infoBiglietto").children;
+                        p[0].children[0].innerText = data.NomeCinema;
+                        p[1].children[0].innerText = data.NomeFilm;
+                        p[2].children[0].innerText = data.OraInizio;
+                        p[3].children[0].innerText = data.CodiceSala;
+                        p[4].children[0].innerText = data.Riga + data.Colonna;
+                    }
+                });
+            }
+            var html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+            document.querySelectorAll('#reader>div:first-child>span:first-child')[0].remove()
+            document.querySelectorAll('#reader__dashboard_section_csr>div>button')[0].click();
+        </script>
+    </div>
+</div>
+<?php }?>
