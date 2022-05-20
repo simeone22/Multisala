@@ -21,49 +21,92 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
 }
 $nome = "";
 $cognome = "";
-$durata = "";
+$email = "";
+$password = "";
+$codicefiscale = "";
+$telefono = "";
+$datanascita = "";
+
 $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
 or die("Connessione fallita: " . mysqli_connect_error());
 if(isset($_GET["id"])){
-    $result = mysqli_query($connessione, "SELECT * FROM Film WHERE IDFilm = " . $_GET["id"])
+    $result = mysqli_query($connessione, "SELECT * FROM Utenti WHERE IDUtente = ". $_GET["id"])
     or die("Query fallita: " . mysqli_error($connessione));
     $row = mysqli_fetch_array($result);
-    $nome = $row["NomeFilm"];
-    $trama = $row["Trama"];
-    $durata = $row["Durata"];
+    $nome = $row["Nome"];
+    $cognome = $row["Cognome"];
+    $email = $row["Email"];
+    $password = $row["Password"];
+    $codicefiscale = $row["CodiceFiscale"];
+    $telefono = $row["Telefono"];
+    $datanascita = $row["DataNascita"];
 }
 ?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-user-tie me-3"></i>Gestisci responsabili</p>
+<a href="gestisci-tutti-responsabili.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
 <div class="w-75 m-auto">
-    <form action="modifica-film.php" method="post">
+    <form action="modifica-responsabile.php" method="post">
         <?php
         if(!isset($_GET["id"])){
             echo "<input type='hidden' name='add' value='true'>";
         }
         ?>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="nome" placeholder="Nome del film" id="nome" value="<?php echo $nome?>" required>
-            <label for="nome">Nome del film</label>
-            <div class="invalid-feedback">Il nome del film non può essere vuoto.</div>
+            <input type="text" class="form-control" name="nome" placeholder="Nome" id="nome" value="<?php echo $nome?>" required>
+            <label for="nome">Nome</label>
+            <div class="invalid-feedback">Il responsabile deve avere un nome.</div>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" placeholder="Trama" type="text" name="trama" id="trama" value="<?php echo $trama?>" required>
-            <label for="trama">Trama</label>
-            <div class="invalid-feedback">La trama non può essere vuota.</div>
+            <input class="form-control" placeholder="cognome" type="text" name="cognome" id="cognome" value="<?php echo $cognome?>" required>
+            <label for="cognome">Cognome</label>
+            <div class="invalid-feedback">Il responsabile deve avere un cognome.</div>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="durata" placeholder="durata" id="durata" value="<?php echo $durata?>" required>
-            <label for="durata">Durata</label>
-            <div class="invalid-feedback">Il film deve avere una durata.</div>
+            <input type="email" class="form-control" name="email" placeholder="email" id="email" value="<?php echo $email?>" required>
+            <label for="email">Email</label>
+            <div class="invalid-feedback">Il responsabile deve avere una mail.</div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="codicefiscale" placeholder="codicefiscale" id="codiceFiscale" maxlength="16" minlength="16" value="<?php echo $codicefiscale?>" required>
+            <label for="codiceFiscale">Codice fiscale</label>
+            <div class="invalid-feedback">Il responsabile deve avere un codice fiscale.</div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="tel" class="form-control" name="telefono" placeholder="telefono" id="telefono" pattern="([0-9]{10})" value="<?php echo $telefono?>" required>
+            <label for="telefono">Telefono </label>
+            <div class="invalid-feedback">Inserire il numero di telefono.</div>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="date" class="form-control" name="dataNascita" placeholder="dataNascita" id="dataNascita" value="<?php echo $datanascita?>" required>
+            <label for="dataNascita">Data di nascita </label>
+            <div class="invalid-feedback">Inserire la data di nascita.</div>
         </div>
     </form>
-    <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaFilm()"; else echo "location.href='gestisci-tutti-film.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
+    <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaResponsabile()"; else echo "location.href='gestisci-tutti-responsabili.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
+    <?php
+    if (isset($_GET["id"]))
+    {
+    ?>
+        <a type="submit" class="btn btn-primary mx-auto" name="reset" placeholder="reset" id="reset" href="password-reset.php">Reset password</a>
+    <?php
+    }
+    ?>
     <button class="btn btn-primary float-end" onclick="checkForm()">Salva</button>
 </div>
 
 <script>
     //TODO: generare in json php
+    function controllaValidita(){
+        let p1 = document.getElementById('password')
+        let p2 = document.getElementById('ripetiPassword');
+        if(p1.value !== p2.value){
+            $('#passwordErr').show();
+            return false;
+        }
+        return true;
+    }
+
     function checkForm(){
         let form = document.getElementsByTagName("form")[0]
         let inputs = form.getElementsByTagName('input');
@@ -78,22 +121,25 @@ if(isset($_GET["id"])){
         }
 
         if(valid) {
-            $.post("modifica-film.php", {
+            $.post("modifica-responsabile.php", {
                 nome: document.getElementById("nome").value,
-                trama: document.getElementById("trama").value,
-                durata: document.getElementById("durata").value,
+                cognome: document.getElementById("cognome").value,
+                email: document.getElementById("email").value,
+                codicefiscale: document.getElementById("codiceFiscale").value,
+                datanascita: document.getElementById("dataNascita").value,
+                telefono: document.getElementById("telefono").value,
                 <?php if(!isset($_GET["id"])) { echo "add: true"; } else{ echo "edit: true, id: " . $_GET["id"]; } ?>
             }, function (data, status) {
-                location.href = "gestisci-tutti-film.php";
+                location.href = "gestisci-tutti-responsabili.php";
             });
         }
     }
     <?php
     if(isset($_GET["id"])){?>
-    function eliminaFilm(){
+    function eliminaResponsabile(){
         let form = document.createElement("form");
         form.setAttribute("method", "POST");
-        form.setAttribute("action", "modifica-film.php");
+        form.setAttribute("action", "modifica-responsabile.php");
         form.classList.add("d-none");
         let input = document.createElement("input");
         input.setAttribute("type", "hidden");

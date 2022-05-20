@@ -61,6 +61,26 @@ if(isset($_GET["id"])){
             <label for="nome">Nome del film</label>
             <div class="invalid-feedback">Il nome del film non può essere vuoto.</div>
         </div>
+        <div class="form-floating mb-3">
+            <select name="categoria" id="categoria" class="form-select" multiple required>
+                <?php
+                $sql = mysqli_query($connessione, "SELECT NomeCategoria FROM Categorie");
+                while($row = $sql->fetch_assoc()){?>
+                    <option value=""><?php echo $row['NomeCategoria']; ?></option>
+                <?php } ?>
+                <div class="invalid-feedback">Il film deve appartene almeno ad una categoria.</div>
+            </select>
+        </div>
+        <div class="form-floating mb-3">
+            <select name="attori" id="attori" class="form-select" multiple required >
+                <?php
+                $sql = mysqli_query($connessione, "SELECT Nome, Cognome FROM Attori");
+                while($row = $sql->fetch_assoc()){?>
+                    <option value="<?php $_GET["id"]?>"><?php echo $row['Nome'] . ' ' . $row['Cognome']; ?></option>
+                <?php } ?>
+                <div class="invalid-feedback">Il film deve avere almeno un attore.</div>
+            </select>
+        </div>
         <div class="form-floating my-3">
             <textarea class="form-control" placeholder="Trama" type="text" name="trama" id="trama" style="height: 310px;" required><?php echo $trama?></textarea>
             <label for="trama">Trama</label>
@@ -110,6 +130,7 @@ if(isset($_GET["id"])){
             });
         }
     }
+
     <?php
     if(isset($_GET["id"])){?>
     function eliminaFilm(){
