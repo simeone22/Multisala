@@ -54,7 +54,7 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
                                 else
                                     echo "<i class='fa-solid fa-star me-2'></i>";
                             }
-                            echo "$voto</p>
+                            echo "</p>
                                                     </div>
                                                     <div class=\"col-12 col-md-8\">
                                                         <p class=\"card-text\">$commento</p>
