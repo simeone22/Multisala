@@ -47,7 +47,14 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
                                             <div class=\"card-body\">
                                                 <div class=\"row\">
                                                     <div class=\"col-12 col-md-4\">
-                                                        <p class=\"card-text\">Voto: $voto</p>
+                                                        <p class=\"card-text\">Voto:";
+                            for ($i = 0; $i < 5; $i++){
+                                if($i < $voto)
+                                    echo "<i class='fa-solid fa-star me-2' style='color: #f8f024'></i>";
+                                else
+                                    echo "<i class='fa-solid fa-star me-2'></i>";
+                            }
+                            echo "$voto</p>
                                                     </div>
                                                     <div class=\"col-12 col-md-8\">
                                                         <p class=\"card-text\">$commento</p>
