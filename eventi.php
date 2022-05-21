@@ -16,5 +16,8 @@
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
+<div class="container">
+    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-calendar"> Eventi </i></h2>
+</div>
 </body>
 </html>
