@@ -55,7 +55,7 @@
              </div>
           </div>
           <div aria-labelledby="parte2" id="parte2">
-              <div class="card card-body" data-parent="parte2" style="position: relative; margin-top: 30px;">
+              <div class="card card-body" data-parent="parte2" style="position: relative; margin-top: 30px; height: 620px;">
                   <div class="container align-middle" style="padding-top: 50px;">
                       <div class="row d-flex">
                           <div class="col-3 d-flex justify-content-center">
@@ -83,7 +83,7 @@
                                           <div class="accordion-body">
                                               <p>
                                                   Nel 2154, una compagnia interplanetaria terrestre, la RDA, è da alcuni anni all'opera su Pandora, un mondo primordiale ricoperto da foreste pluviali, le cui flora e fauna sono di dimensioni superiori rispetto a quelle terrestri. Tra le specie del pianeta ve n'è una di umanoidi chiamati Na'vi; per questo sono stati sviluppati gli avatar, cioè ibridi creati in laboratorio con geni umani e geni Na'vi, con ciascun avatar che può essere utilizzato e controllato solo dall'essere umano il cui DNA è stato impiegato per comporlo. Il collegamento viene effettuato grazie a una speciale capsula tecnologica, dove il soggetto trasferisce coscienza e anima nell'avatar.
-                                                  La RDA è interessata ai ricchi giacimenti di unobtainium, un cristallo ferroso che sarebbe la risposta ai gravi problemi energetici della Terra. Un abbondante giacimento è stato individuato proprio sotto l'insediamento del clan Na'vi degli Omaticaya (l'Albero Casa), che la RDA ha tentato di far allontanare attivando il programma avatar, guidato dalla dottoressa Grace Augustine, che è riuscita a insegnare la lingua umana ai Na'vi e ad apprendere la loro cultura, ma i rapporti si sono guastati dopo alcuni incidenti e la via diplomatica viene criticata dal dirigente Parker Selfridge e dal colonnello Miles Quaritch. Intanto approda su Pandora l'ex marine invalido Jake Sully, che ha accettato di rimpiazzare il fratello gemello Tommy, uno scienziato a lungo addestratosi per pilotare un avatar ma che, poco prima di partire, era stato ucciso. Jake, lautamente pagato per sostituire Tommy, accetta l'offerta del colonnello Quaritch: in cambio di informazioni utili per un attacco militare, potrà sottoporsi a una costosa operazione chirurgica sulla Terra e riavere l'uso delle gambe.
+                                                  La RDA è interessata ai ricchi giacimenti di unobtainium, un cristallo ferroso che sarebbe la risposta ai gravi problemi energetici della Terra.
                                               </p>
                                           </div>
                                       </div>
@@ -91,6 +91,77 @@
                           </div>
                       </div>
                   </div>
+              </div>
+              <div id="parte3" aria-labelledby="parte3">
+                  <div class="card card-body" data-parent="parte3" style="position: relative; margin-top: 30px; height: 620px;">
+                      <div class="container align-middle" style="padding-top: 50px;">
+                          <div class="row d-flex">
+                              <div class="col-3 d-flex justify-content-center">
+                                  <form action="" style="height: 28%;">
+                                      <img src="https://mr.comingsoon.it/imgdb/locandine/big/58183.jpg" alt="" style="height: 100%;">
+                                  </form>
+                              </div>
+                              <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
+                                  <h2 class="visible text-start" style="padding-bottom: 3px;">Shang-Chi: la leggenda dei 10 anelli</h2>
+                                  <strong>Regista</strong>
+                                  <p>Destin Daniel Cretton</p>
+                                  <strong>Durata</strong>
+                                  <p>132 min</p>
+                                  <strong>Attori</strong>
+                                  <p>Simu Liu, Fala Chen, Benedict Wong.</p>
+                                  <div id="example" class="accordion-item">
+                                      <p id="headingOne" class="accordion-header">
+                                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dd3" aria-expanded="false" aria-controls="dd3">
+                                            <strong>Trama</strong>
+                                          </button>
+                                      </p>
+                                      <div id="dd3" class="accordion-collapse collapse overflow-auto h-25" aria-labelledby="headingOne" data-bs-parent="#example">
+                                          <div class="accordion-body">
+                                              <p>Per mille anni, Wenwu, oggi conosciuto come il Mandarino, ha sfruttato i poteri dei Dieci Anelli per creare l'omonima organizzazione terroristica e manipolare gli eventi a proprio vantaggio. Nel 1996, in cerca del leggendario villaggio di Ta-Lo, in Cina, ebbe modo di scontrarsi con la sua futura moglie, Jiang Li. Seppur perdendo, l'uomo si infatuò della donna, amore per il quale venne ricambiato e abbandonò il suo precedente stile di vita. Qualche anno dopo, Jiang Li venne uccisa da una gang criminale nemica di Wenwu e quest'ultimo si vendicò uccidendoli tutti, seppur non trovandone il capo, e tornò alla sua precedente vita, includendo anche l'allora figlio di soli 7 anni, Shang-Chi. Addestrato a essere un assassino, a 14 anni Shang-Chi uccise, su ordine di Wenwu, il capo della gang che uccise la madre, ma dopo ciò decise di fuggire da casa, lasciando indietro la sorella Xialing. </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div id="parte4" aria-labelledby="parte4">
+                      <div class="card card-body" data-parent="parte4" style="position: relative; margin-top: 30px; height: 620px;">
+                          <div class="container align-middle" style="padding-top: 50px;">
+                              <div class="row d-flex">
+                                  <div class="col-3 d-flex justify-content-center">
+                                      <form action="" style="height: 55%;">
+                                          <img src="https://lumiere-a.akamaihd.net/v1/images/p_avengersendgame_19751_e14a0104.jpeg?region=0%2C0%2C540%2C810" alt="" style="height: 100%;">
+                                      </form>
+                                  </div>
+                                  <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
+                                      <h2 class="visible text-start" style="padding-bottom: 3px;">Avengers: endgame</h2>
+                                      <strong>Regista</strong>
+                                      <p>Anthony e Joe Russo</p>
+                                      <strong>Durata</strong>
+                                      <p>181 min</p>
+                                      <strong>Attori</strong>
+                                      <p>Robert downey jr, Chris Evans, Scarlett johansson...</p>
+                                      <div id="example" class="accordion-item">
+                                          <p id="headingOne" class="accordion-header">
+                                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dd4" aria-expanded="false" aria-controls="dd4">
+                                                  <strong>Trama</strong>
+                                              </button>
+                                          </p>
+                                          <div id="dd4" class="accordion-collapse collapse overflow-auto h-25" aria-labelledby="headingOne" data-bs-parent="#example">
+                                              <div class="accordion-body">
+                                                  <p>In seguito allo schiocco di dita di Thanos, Clint Barton vede scomparire tutta la sua famiglia. Ventidue giorni più tardi, Tony Stark e Nebula, che si trovano sull'astronave dei Guardiani della Galassia, vengono salvati e portati al quartier generale degli Avengers da Captain Marvel. I tre si ricongiungono con Pepper Potts, Steve Rogers, Natasha Romanoff, Bruce Banner, James Rhodes, Thor e Rocket. Il gruppo, speranzoso di utilizzare le Gemme per riportare tutti in vita, localizza Thanos, ma, una volta raggiunto, quest'ultimo spiega di averle distrutte sfruttando il loro stesso potere, cosa che gli è quasi costata la vita. Appreso ciò, Thor, furioso, lo decapita... </p>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="container">
+                  <hr class="featurette-divider">
               </div>
           </div>
       </div>
