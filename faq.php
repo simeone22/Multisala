@@ -22,14 +22,6 @@
         <div class="col-sm-12 col-lg-12">
             <div class="m18-content-content">
                 <p>
-                    <strong>Posso acquistare dei biglietti per una persona non intestataria del buono?</strong>
-                </p>
-                <p style="font-weight: normal; padding-bottom: 10px;">
-                    <font style="font-size: 12pt" size="3">
-                        No, i beni e i servizi sono nominali, quindi vendibili solamente ai docenti intestatari del buono.
-                    </font>
-                </p>
-                <p>
                     <strong>Posso prenotare un posto ben preciso?</strong>
                 </p>
                 <p style="font-weight: normal; padding-bottom: 10px;">
@@ -44,15 +36,6 @@
                 <p style="font-weight: normal; padding-bottom: 10px;">
                     <font style="font-size: 12pt" size="3">
                         Le informazioni geografiche sui vari multisala si trovano nella home.
-                    </font>
-                </p>
-                <p>
-                    <strong>Che informazioni mi fornisce la pagina statistiche?</strong>
-                </p>
-                <p style="font-weight: normal; padding-bottom: 10px;">
-                    <font style="font-size: 12pt" size="3">
-                        La pagina delle statistiche mi permette di controllare il numero di prenotazioni effettuate, grazie anche a filtri
-                        come giorno, mese e anno.
                     </font>
                 </p>
                 <p>

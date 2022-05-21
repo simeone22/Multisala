@@ -45,8 +45,7 @@
                                  <div id="dd" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
                                      <div class="accordion-body">
                                          <p>
-                                             Tutankhamon. L'ultima mostra, film diretto da Ernesto Pagano, è un documentario si addentra nell'Antico Egitto e, in particolare, nella leggenda di Tutankhamon, una delle figure più misteriose al mondo, nonché il nome legato alla maledizione del faraone. La scoperta della sua tomba nella Valle dei Re risale al 1922 per opera dell'egittologo inglese Howard Carter, che determinato a continuare gli scavi, trovò il primo dei sedici gradini che portavano alla tomba del faraone, una delle più piccole, ma intatta e ricca di corredo di funebre. Carter è stato il primo a guardare all'interno della camera sepolcrale, mediante un piccolo foro eseguito nell'intonaco. Quando gli venne chiesto se riuscisse a scorgere qualcosa, Carter rispose di vedere "cose meravigliose" e, infatti, la camera non solo è rimasta ferma nel tempo, ma aveva al suo interno un grande tesoro: circa 150 oggetti.
-                                             In occasione del centesimo anniversario dal ritrovamento della tomba di Tutankhamon, il documentario ripercorre questa grande scoperta grazie alla mostra internazionale Golden Boy del fotografo Sandro Vanini, che mostra il tesoro della camera funeraria, visibile oggi solo a Il Cairo.
+                                             Tutankhamon. L'ultima mostra, film diretto da Ernesto Pagano, è un documentario si addentra nell'Antico Egitto e, in particolare, nella leggenda di Tutankhamon, una delle figure più misteriose al mondo, nonché il nome legato alla maledizione del faraone.
                                          </p>
                                      </div>
                                  </div>
@@ -56,7 +55,7 @@
              </div>
           </div>
           <div aria-labelledby="parte2" id="parte2">
-              <div class="card card-body" data-parent="parte2" style="position: relative;">
+              <div class="card card-body" data-parent="parte2" style="position: relative; margin-top: 30px;">
                   <div class="container align-middle" style="padding-top: 50px;">
                       <div class="row d-flex">
                           <div class="col-3 d-flex justify-content-center">
