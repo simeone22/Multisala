@@ -18,7 +18,6 @@
 <?php include "navbar.php" ?>
 
 <div class="container text-center" style="max-width: 200%; margin-top: 20px;">
-    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-calendar"></i> Eventi </h2>
     <div aria-labelledby="<?php
     $sql = "SELECT * FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
     $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
@@ -33,7 +32,7 @@
                 <div class="row d-flex">
                     <div class="col-3 d-flex justify-content-center">
                         <form action="" method="get" style="height: 28%;">
-                            <img src="<?php echo $row["IDFilm"]?>.jpg" alt="..." style="height: 100%;">
+                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?> . .jpg" alt="..." style="height: 100%;">
                         </form>
                     </div>
                     <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
