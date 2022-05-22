@@ -17,43 +17,57 @@
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
 
-<div class="container">
+<div class="container text-center" style="max-width: 200%; margin-top: 20px;">
     <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-calendar"></i> Eventi </h2>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th>Nome film</th>
-                        <th>Sala</th>
-                        <th>Ora inizio</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    <?php
-                    $sql = "SELECT NomeFilm, CodiceSala, OraInizio FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
-                    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
-                    or die("Errore di connessione al database");
-                    $result = $connessione->query($sql);
-                    if($result->num_rows > 0){
-                        while($row = $result->fetch_assoc()){
-                            echo "<tr>";
-                            echo "<td>".$row["NomeFilm"]."</td>";
-                            echo "<td>".$row["CodiceSala"]."</td>";
-                            echo "<td>".$row["OraInizio"]."</td>";
-                            echo "</tr>";
-                        }
-                    }else{
-                        echo "<tr><td colspan='5'>Nessun evento presente</td></tr>";
-                    }
-                    ?>
-                    </tbody>
-                </table>
+    <div aria-labelledby="<?php
+    $sql = "SELECT * FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
+    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+    or die("Errore di connessione al database");
+    $result = $connessione->query($sql);
+    if($result->num_rows > 0){
+     while($row = $result->fetch_assoc()){
+         echo $row["IDFilm"];
+    ?>" id="<?php echo $row["IDFilm"];?>">
+        <div class="card card-body" data-parent="<?php echo $row["IDFilm"];?>" style="position: relative; height: 620px;">
+            <div class="container align-middle" style="padding-top: 50px;">
+                <div class="row d-flex">
+                    <div class="col-3 d-flex justify-content-center">
+                        <form action="" method="get" style="height: 28%;">
+                            <img src="<?php echo $row["IDFilm"]?>.jpg" alt="..." style="height: 100%;">
+                        </form>
+                    </div>
+                    <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
+                        <h2 class="visible text-start" style="padding-bottom: 3px;">
+                            <strong><?php echo $row["NomeFilm"] ?></strong>
+                        </h2>
+                        <strong>Sala</strong>
+                        <p> <?php echo $row["CodiceSala"]?> </p>
+                        <strong>Durata</strong>
+                        <p> <?php echo $row["Durata"]?> </p>
+                        <strong>Ora d'inizio</strong>
+                        <p><?php echo $row["OraInizio"]?></p>
+                        <div id="example" class="accordion-item">
+                            <p id="headingOne" class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dd" aria-expanded="false" aria-controls="dd">
+                                    <strong>Descrizione</strong>
+                                </button>
+                            </p>
+                            <div id="dd" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
+                                <div class="accordion-body">
+                                    <p maxlenght="100">
+                                        <?php echo $row["Trama"]?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <?php
+    }
+    }?>
 </div>
 </body>
 </html>
