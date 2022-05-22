@@ -16,7 +16,7 @@
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
-
+<h2 class="page-heading mt-5 mb-5" style="padding-left: 20px;"><i class="fa-solid fa-calendar"></i> Eventi </h2>
 <div class="container text-center" style="max-width: 200%; margin-top: 20px;">
     <div aria-labelledby="<?php
     $sql = "SELECT * FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
@@ -32,7 +32,7 @@
                 <div class="row d-flex">
                     <div class="col-3 d-flex justify-content-center">
                         <form action="" method="get" style="height: 28%;">
-                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?> . .jpg" alt="..." style="height: 100%;">
+                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 100%;">
                         </form>
                     </div>
                     <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
@@ -53,8 +53,16 @@
                             </p>
                             <div id="dd" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
                                 <div class="accordion-body">
-                                    <p maxlenght="100">
-                                        <?php echo $row["Trama"]?>
+                                    <p>
+                                        <?php
+                                        if(strlen($row["Trama"]) > 478){
+                                            $row["Trama"] = substr($row["Trama"], 0, 478) . "...";
+                                            echo $row["Trama"];
+                                        }
+                                        else {
+                                            echo $row["Trama"];
+                                        }
+                                        ?>
                                     </p>
                                 </div>
                             </div>
