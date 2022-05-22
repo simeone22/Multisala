@@ -16,10 +16,10 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                     <a <?php if($position === 'home'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="home.php"> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a <?php if($position === 'prossimamente'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="film.php"> Film</a>
+                    <a <?php if($position === 'film'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="film.php"> Film</a>
                 </li>
                 <li class="nav-item">
-                    <a <?php if($position === 'film'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="eventi.php"> Eventi</a>
+                    <a <?php if($position === 'eventi'){ echo 'class="nav-link active" aria-current="page"';}else echo 'class="nav-link"';?> class="nav-link" aria-current="page" href="eventi.php"> Eventi</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdowni" data-bs-toggle="dropdown" role="button" aria-expanded="false"> Info</a>
