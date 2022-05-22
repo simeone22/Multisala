@@ -16,6 +16,8 @@
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
+
+<h2 class="page-heading mt-5 mb-5" style="padding-left: 20px;"><i class="fa-solid fa-films"></i> Film </h2>
   <div class="container text-center" style="max-width: 200%; margin-top: 20px;">
       <div aria-labelledby="parte1" id="parte1">
           <div class="card card-body" data-parent="parte1" style="position: relative; height: 620px;">
