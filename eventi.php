@@ -16,8 +16,44 @@
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
+
 <div class="container">
-    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-calendar"> Eventi </i></h2>
+    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-calendar"></i> Eventi </h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Nome film</th>
+                        <th>Sala</th>
+                        <th>Ora inizio</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <?php
+                    $sql = "SELECT NomeFilm, CodiceSala, OraInizio FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
+                    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+                    or die("Errore di connessione al database");
+                    $result = $connessione->query($sql);
+                    if($result->num_rows > 0){
+                        while($row = $result->fetch_assoc()){
+                            echo "<tr>";
+                            echo "<td>".$row["NomeFilm"]."</td>";
+                            echo "<td>".$row["CodiceSala"]."</td>";
+                            echo "<td>".$row["OraInizio"]."</td>";
+                            echo "</tr>";
+                        }
+                    }else{
+                        echo "<tr><td colspan='5'>Nessun evento presente</td></tr>";
+                    }
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
