@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="Media/CSS/checkAnimation.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
-    <title>Film - Multisala</title>
+    <title>Prossimamente - Multisala</title>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>

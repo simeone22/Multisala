@@ -17,7 +17,7 @@
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
 <div class="container">
-    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-comments-question"> Faq </i></h2>
+    <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-comments-question"></i> Faq </h2>
     <div class="row">
         <div class="col-sm-12 col-lg-12">
             <div class="m18-content-content">
@@ -30,14 +30,6 @@
                     </font>
                 </p>
                 <img src="Media/Immagini/prenotazioni.png" alt="" style="width: 1000px; padding-bottom: 40px;">
-                <p>
-                    <strong>Dove posso vedere le varie posizioni dei multisala?</strong>
-                </p>
-                <p style="font-weight: normal; padding-bottom: 10px;">
-                    <font style="font-size: 12pt" size="3">
-                        Le informazioni geografiche sui vari multisala si trovano nella home.
-                    </font>
-                </p>
                 <p>
                     <strong>Dove ho la possibilità di modificare le mie credenziali?</strong>
                 </p>
