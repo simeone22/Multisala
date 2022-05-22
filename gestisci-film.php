@@ -32,13 +32,17 @@ if(isset($_GET["id"])){
     $nome = $row["NomeFilm"];
     $trama = $row["Trama"];
     $durata = $row["Durata"];
+    $result = mysqli_query($connessione, "SELECT * FROM CategorieFilm WHERE idFFilm = " . $_GET["id"] . " ORDER BY idFCategoria");
+    $categorie = $result->fetch_all(MYSQLI_ASSOC);
+    $result = mysqli_query($connessione, "SELECT * FROM AttoriFilm WHERE idFFilm = " . $_GET["id"] . " ORDER BY idFAttore");
+    $attori = $result->fetch_all(MYSQLI_ASSOC);
 }
 ?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Aggiungi film</p>
 <a href="gestisci-tutti-film.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
 <div class="w-75 m-auto mb-5">
-    <form action="modifica-film.php" method="post">
+    <form action="modifica-film.php" enctype="multipart/form-data" method="post">
         <?php
         if(!isset($_GET["id"])){
             echo "<input type='hidden' name='add' value='true'>";
@@ -65,22 +69,47 @@ if(isset($_GET["id"])){
         <div class="form-floating mb-3">
             <select name="categoria" id="categoria" class="form-select" multiple required>
                 <?php
-                $sql = mysqli_query($connessione, "SELECT NomeCategoria FROM Categorie");
+                $sql = mysqli_query($connessione, "SELECT * FROM Categorie ORDER BY IDCategoria");
+                $pcat = 0;
                 while($row = $sql->fetch_assoc()){?>
-                    <option value=""><?php echo $row['NomeCategoria']; ?></option>
-                <?php } ?>
+                    <?php
+                    echo "<option value=\"" . $row["IDCategoria"] . "\"";
+                    if(isset($_GET["id"])){
+                        if($pcat < count($categorie)) {
+                            if ($row["IDCategoria"] == $categorie[$pcat]["idFCategoria"]) {
+                                echo " selected";
+                                $pcat++;
+                            }
+                        }
+                    }
+                    echo ">" . $row["NomeCategoria"] . "</option>";
+                } ?>
                 <div class="invalid-feedback">Il film deve appartene almeno ad una categoria.</div>
             </select>
         </div>
-        <div class="form-floating mb-3">
-            <select name="attori" id="attori" class="form-select" multiple required >
-                <?php
-                $sql = mysqli_query($connessione, "SELECT Nome, Cognome FROM Attori");
-                while($row = $sql->fetch_assoc()){?>
-                    <option value="<?php ?>"><?php echo $row['Nome'] . ' ' . $row['Cognome']; ?></option>
-                <?php } ?>
-                <div class="invalid-feedback">Il film deve avere almeno un attore.</div>
-            </select>
+        <div class="input-group row g-1 mb-3">
+            <div class="form-floating col-11">
+                <select name="attori" id="attori" class="form-select" multiple required >
+                    <?php
+                    $sql = mysqli_query($connessione, "SELECT * FROM Attori");
+                    $pcat = 0;
+                    while($row = $sql->fetch_assoc()){?>
+                        <?php
+                        echo "<option value=\"" . $row["IDAttore"] . "\"";
+                        if(isset($_GET["id"])){
+                            if($pcat < count($attori)) {
+                                if ($row["IDAttore"] == $attori[$pcat]["idFAttore"]) {
+                                    echo " selected";
+                                    $pcat++;
+                                }
+                            }
+                        }
+                        echo ">" . $row["Nome"] . " " . $row["Cognome"] . "</option>";
+                    } ?>
+                    <div class="invalid-feedback">Il film deve avere almeno un attore.</div>
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary input-group-append col-1" onclick="$('#aggiungiAttore').modal('show');"><i class="fa-solid fa-plus-large"></i></button>
         </div>
         <div class="form-floating my-3">
             <textarea class="form-control" placeholder="Trama" type="text" name="trama" id="trama" style="height: 310px;" required><?php echo $trama?></textarea>
@@ -96,13 +125,63 @@ if(isset($_GET["id"])){
     <button class="btn btn-danger" onclick="<?php if(isset($_GET["id"])) echo "eliminaFilm()"; else echo "location.href='gestisci-tutti-film.php';";?>"><?php if(isset($_GET["id"])) echo "Elimina"; else echo "Annulla";?></button>
     <button class="btn btn-primary float-end" onclick="checkForm()">Salva</button>
 </div>
-
+<div class="modal" tabindex="-1" id="aggiungiAttore">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aggiungi un attore</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="password-reset.php" method="post">
+                    <div class="input-group mb-3">
+                        <div class="form-floating">
+                            <input name="nomeAttore" id="nomeAttore" type="text" placeholder="Nome" class="form-control" required>
+                            <label for="nomeAttore">Nome</label>
+                            <div class="invalid-feedback">Il nome non può essere vuoto.</div>
+                        </div>
+                        <div class="form-floating">
+                            <input name="cognomeAttore" id="cognomeAttore" type="text" placeholder="Cognome" class="form-control" required>
+                            <label for="cognomeAttore">Cognome</label>
+                            <div class="invalid-feedback">Il cognome non può essere vuoto.</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="this.parentElement.parentElement.getElementsByTagName('form')[0].reset();">Annulla</button>
+                <button type="button" class="btn btn-primary" onclick="checkFormAttore(this.parentElement.parentElement.getElementsByTagName('form')[0])">Aggiungi</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     let immagineUp = document.getElementById('immagine');
     immagineUp.onchange = evt => {
         const [file] = immagineUp.files;
         if(file){
             document.getElementById('imgCop').src = URL.createObjectURL(file);
+        }
+    }
+    function checkFormAttore(form){
+        let inputs = form.getElementsByTagName('input');
+        let valid = true;
+        for(let i = 0; i < inputs.length; i++){
+            if(!inputs[i].checkValidity()){
+                valid = false;
+                inputs[i].classList.add('is-invalid');
+            }else{
+                inputs[i].classList.remove('is-invalid');
+            }
+        }
+        if(valid){
+            $.post("modifica-film.php", {
+                nome: inputs[0].value,
+                cognome: inputs[1].value,
+                attore: true
+            }, () => {
+                location.reload();
+            });
         }
     }
     //TODO: generare in json php
@@ -121,13 +200,35 @@ if(isset($_GET["id"])){
         }
 
         if(valid) {
-            $.post("modifica-film.php", {
+            let dati = {
                 nome: document.getElementById("nome").value,
                 trama: document.getElementById("trama").value,
                 durata: document.getElementById("durata").value,
+                categorie: Array.from(document.getElementById('categoria').options).filter(opt => opt.selected).map(opt => opt.value),
+                attori: Array.from(document.getElementById('attori').options).filter(opt => opt.selected).map(opt => opt.value),
                 <?php if(!isset($_GET["id"])) { echo "add: true"; } else{ echo "edit: true, id: " . $_GET["id"]; } ?>
-            }, function (data, status) {
-                location.href = "gestisci-tutti-film.php";
+            };
+            $.post("modifica-film.php", dati, function (data, status) {
+                if(immagineUp.files[0]){
+                    let frm = document.createElement("form");
+                    let img = document.createElement("input");
+                    let id = document.createElement("input");
+                    img.type = "hidden";
+                    img.name = "img";
+                    img.value = true;
+                    id.type = "hidden";
+                    id.name = "id";
+                    id.value = data;
+                    frm.enctype = "multipart/form-data";
+                    frm.action = "modifica-film.php";
+                    frm.method = "post";
+                    frm.append(immagineUp);
+                    frm.append(img);
+                    frm.append(id);
+                    frm.classList.add("d-none");
+                    document.body.append(frm);
+                    frm.submit();
+                }
             });
         }
     }
