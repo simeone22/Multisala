@@ -125,16 +125,17 @@ if(isset($_POST["add"])){
     $privata = $_POST["privata"];
     $idSala = $_POST["idSala"];
     $idFilm = $_POST["idFilm"];
+    $prezzo = $_POST["prezzo"];
     echo $privata;
     echo $idSala;
-    if(empty($id) || empty($oraInizio) || empty($privata) || empty($idSala) || empty($idFilm)){
+    if(empty($id) || empty($oraInizio) || empty($privata) || empty($idSala) || empty($idFilm) || empty($prezzo)){
         $_SESSION["error"] = "Errore nell'inserimento dei dati";
         http_response_code(400);
         exit();
     }
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
-    $query = "UPDATE Proiezioni SET OraInizio = '$oraInizio', Privata = $privata, idFSala = '$idSala', idFFilm = '$idFilm' WHERE IDProiezione = '$id'";
+    $query = "UPDATE Proiezioni SET OraInizio = '$oraInizio', Privata = $privata, idFSala = '$idSala', idFFilm = '$idFilm', Prezzo = $prezzo WHERE IDProiezione = '$id'";
     $result = mysqli_query($connessione, $query);
     if(!$result){
         $_SESSION["error"] = "Errore nell'aggiornamento della proiezione";
@@ -148,14 +149,15 @@ if(isset($_POST["add"])){
     $privata = $_POST["privata"];
     $idSala = $_POST["idSala"];
     $idFilm = $_POST["idFilm"];
-    if(empty($oraInizio) || empty($privata) || empty($idSala) || empty($idFilm)){
+    $prezzo = $_POST["prezzo"];
+    if(empty($oraInizio) || empty($privata) || empty($idSala) || empty($idFilm) || empty($prezzo)){
         $_SESSION["error"] = "Errore nell'inserimento dei dati";
         http_response_code(400);
         exit();
     }
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
-    $query = "INSERT INTO Proiezioni (OraInizio, Privata, idFSala, idFFilm) VALUES ('$oraInizio', $privata, '$idSala', '$idFilm')";
+    $query = "INSERT INTO Proiezioni (OraInizio, Privata, idFSala, idFFilm, Prezzo) VALUES ('$oraInizio', $privata, '$idSala', '$idFilm', $prezzo)";
     $result = mysqli_query($connessione, $query);
     if(!$result){
         $_SESSION["error"] = "Errore nell'aggiunta della proiezione";
