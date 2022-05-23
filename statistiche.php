@@ -77,7 +77,8 @@ if(!$result){
             datasets: [{
                 label: 'Prenotazioni',
                 data: <?php echo json_encode($dati);?>,
-                fill: false,
+                fill: true,
+                backgroundColor: 'rgb(75, 192, 192)',
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
@@ -93,8 +94,9 @@ if(!$result){
     function impostaGiornoProiezioni(tipo){
         if(tipo === undefined){
             location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value;
+        }else {
+            location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value + "&tipo=" + tipo;
         }
-        location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value + "&tipo=" + tipo;
     }
 </script>
 </body>
