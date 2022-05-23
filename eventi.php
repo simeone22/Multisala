@@ -44,7 +44,7 @@
                         <strong>Sala</strong>
                         <p> <?php echo $row["CodiceSala"]?> </p>
                         <strong>Durata</strong>
-                        <p> <?php echo $row["Durata"]?> </p>
+                        <p> <?php echo $row["Durata"]?> min </p>
                         <strong>Ora d'inizio</strong>
                         <p><?php echo $row["OraInizio"]?></p>
                         <div id="example" class="accordion-item">
@@ -53,7 +53,9 @@
                                     <strong>Descrizione</strong>
                                 </button>
                             </p>
-                            <div id="d-<?php echo $row["IDFilm"]; ?>" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
+                            <div id="d-<?php
+
+                            echo $row["IDFilm"]; ?>" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
                                 <div class="accordion-body">
                                     <p>
                                         <?php

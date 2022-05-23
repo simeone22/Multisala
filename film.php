@@ -42,9 +42,18 @@
                                  <strong><?php echo $row["NomeFilm"] ?></strong>
                              </h2>
                              <strong>Durata</strong>
-                             <p><?php echo $row["Durata"]?></p>
+                             <p><?php echo $row["Durata"]?> min </p>
                              <strong>Attori</strong>
-                             <p><?php echo $row["Nome"] . " " . $row["Cognome"]?></p>
+                             <p><?php
+                                 $query = "SELECT Nome, Cognome FROM Attori INNER JOIN AttoriFilm ON Attori.IDAttore = AttoriFilm.idFAttore WHERE idFFilm = ". $row["IDFilm"];
+                                 $risultato = $connessione->query($query);
+                                 if($risultato->num_rows > 0){
+                                     $attori = [];
+                                     while($r = $risultato->fetch_assoc()){
+                                         $attori[] = $r["Nome"] . " " . $r["Cognome"];
+                                     }
+                                     echo implode(", ", $attori);
+                                 }?></p>
                              <div id="example" class="accordion-item">
                                  <p id="headingOne" class="accordion-header">
                                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#d-<?php echo $row["IDFilm"]; ?>" aria-expanded="false" aria-controls="d-<?php echo $row["IDFilm"]; ?>">
