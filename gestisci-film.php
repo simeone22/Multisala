@@ -228,6 +228,8 @@ if(isset($_GET["id"])){
                     frm.classList.add("d-none");
                     document.body.append(frm);
                     frm.submit();
+                }else{
+                    location.reload();
                 }
             });
         }
