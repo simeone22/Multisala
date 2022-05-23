@@ -156,7 +156,7 @@ if(isset($_GET["id"])){
                 <tr>
                     <th>Sala</th>
                     <?php
-                        $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDSala, CodiceSala, OraInizio, Durata, Privata FROM ((Proiezioni AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala) INNER JOIN Cinema AS C ON S.idFCinema = C.IDCinema) INNER JOIN Film AS F ON P.idFFilm = F.IDFilm WHERE DATE(OraInizio) = '" . $data->format("Y-m-d") . "' AND C.IDCinema = '".$_GET["id"]."' ORDER BY CodiceSala, OraInizio");
+                        $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDSala, CodiceSala, Prezzo, OraInizio, Durata, Privata FROM ((Proiezioni AS P INNER JOIN Sale AS S ON P.idFSala = S.IDSala) INNER JOIN Cinema AS C ON S.idFCinema = C.IDCinema) INNER JOIN Film AS F ON P.idFFilm = F.IDFilm WHERE DATE(OraInizio) = '" . $data->format("Y-m-d") . "' AND C.IDCinema = '".$_GET["id"]."' ORDER BY CodiceSala, OraInizio");
                         $film = $result->fetch_all(MYSQLI_ASSOC);
                         for($i = 0; $i < 24; $i++){
                             echo "<th>". ($i + 1) ."</th>";
@@ -298,6 +298,11 @@ if(isset($_GET["id"])){
                         <label for="salaProiezione">Sala</label>
                     </div>
                     <div class="form-floating mb-3">
+                        <input type="number" min="0.01" step="0.01" class="form-control" placeholder="Prezzo" id="prezzo" required>
+                        <label for="prezzo">Prezzo</label>
+                        <div class="invalid-feedback">Il prezzo deve essere maggiore di 0€.</div>
+                    </div>
+                    <div class="form-floating mb-3">
                         <input type="datetime-local" class="form-control" placeholder="Ora inizio" id="dataProiezione" onchange="impostaOraFineProiezione()" required>
                         <label for="dataProiezione">Ora inizio</label>
                         <div class="invalid-feedback">L'ora di inizio non può essere vuota e non può essere più recente di adesso.</div>
@@ -358,9 +363,6 @@ if(isset($_GET["id"])){
             $("#nuovoCodiceSala").val(codsala);
             $("#rigaPosto").val("");
             $("#colonnaPosto").val("");
-            $("#oraProiezione").parent().addClass("d-none");
-            $("#dataProiezione").parent().removeClass("d-none");
-            $("#eliminaProiezione").removeClass("d-none");
             let sala = sale.filter(s => s.codice == codsala)[0];
             document.getElementById('graficoPosti').innerHTML = "";
             for (let i = 0; i < sala.posti.length; i++) {
@@ -669,6 +671,7 @@ if(isset($_GET["id"])){
             $('#proiezionePrivata').attr("checked", proiezione.Privata != 0);
             $('#filmProiezione').val(proiezione.IDFilm);
             $('#salaProiezione').val(proiezione.IDSala);
+            $('#prezzo').val(proiezione.Prezzo);
             let oraInizio = new Date(proiezione.OraInizio);
             oraInizio = new Date(oraInizio.getTime() - oraInizio.getTimezoneOffset() * 60000);
             $('#dataProiezione').val(oraInizio.toISOString().split("Z")[0]);
@@ -684,6 +687,7 @@ if(isset($_GET["id"])){
             }
             let film = document.getElementById('filmProiezione');
             let salaProiezione = document.getElementById('salaProiezione');
+            let prezzo = document.getElementById('prezzo');
             if(!dataProiezione.checkValidity()){
                 dataProiezione.classList.add("is-invalid");
                 return;
@@ -694,6 +698,10 @@ if(isset($_GET["id"])){
             }
             if(!salaProiezione.checkValidity()){
                 salaProiezione.classList.add("is-invalid");
+                return;
+            }
+            if(!prezzo.checkValidity()){
+                prezzo.classList.add("is-invalid");
                 return;
             }
             dataProiezione.classList.remove("is-invalid");
@@ -745,6 +753,7 @@ if(isset($_GET["id"])){
                 $.post("modifica-cinema.php", {
                     idFilm: $('#filmProiezione').val(),
                     idSala: $('#salaProiezione').val(),
+                    prezzo: $('#prezzo').val(),
                     oraInizio: new Date(dti.getTime() - dti.getTimezoneOffset() * 60000).toISOString().split("Z")[0],
                     privata: $('#proiezionePrivata').prop("checked"),
                     aggiungiProiezione: true
@@ -756,6 +765,7 @@ if(isset($_GET["id"])){
                     id: $('#idProiezione').val(),
                     idFilm: $('#filmProiezione').val(),
                     idSala: $('#salaProiezione').val(),
+                    prezzo: $('#prezzo').val(),
                     oraInizio: $('#dataProiezione').val(),
                     privata: $('#proiezionePrivata').prop("checked"),
                     modificaProiezione: true
@@ -786,6 +796,7 @@ if(isset($_GET["id"])){
             $('#idProiezione').val("");
             $('#filmProiezione').val("");
             $('#salaProiezione').val("");
+            $('#prezzo').val("");
             $('#dataProiezione').val("");
             $('#oraProiezione').val("");
             $('#oraFineProiezione').val("");
