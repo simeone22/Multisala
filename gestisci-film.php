@@ -229,7 +229,7 @@ if(isset($_GET["id"])){
                     document.body.append(frm);
                     frm.submit();
                 }else{
-                    location.reload();
+                    location.href = "gestisci-tutti-film.php";
                 }
             });
         }

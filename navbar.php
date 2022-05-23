@@ -68,11 +68,11 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                 </li>
                 <?php if ($_SESSION["tipoutente"] == 3) {?>
                 <li class="nav-item mx-3">
-                    <a href="Carrello.jsp" class="mt-1 btn btn-outline-primary py-2">
+                    <a href="carrello.php" class="mt-1 btn btn-outline-primary py-2">
                         <i class="fa-solid fa-cart-shopping"></i>
                         <?php
                         $PCount = 0;
-                        if (isset($_SESSION["carrello"]) && $_SESSION["carrello"] > 0) {
+                        if (isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0) {
                             for ($i = 0; $i < count($_SESSION["carrello"]); $i++) {
                                 $PCount += $_SESSION["carrello"][$i]["quantita"];
                             }

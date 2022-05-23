@@ -65,6 +65,19 @@ if(isset($_GET["id"])){
             echo "<input type='hidden' name='add' value='true'>";
         }
         ?>
+        <div>
+            <img src="Media/Cinema/<?php
+            if(isset($_GET["id"])){
+                echo $_GET["id"];
+            }else {
+                echo "default";
+            }
+            ?>.png" class="mb-3 w-25 mx-auto d-block" id="imgCop">
+        </div>
+        <div class="form-floating mb-3">
+            <input type="file" class="form-control" name="immagine" placeholder="Copertina" id="immagine" accept="image/png">
+            <label for="immagine">Copertina</label>
+        </div>
         <div class="form-floating mb-3">
             <input type="text" class="form-control" name="nome" placeholder="Nome del cinema" id="nome" value="<?php echo $nome; ?>" required>
             <label for="nome">Nome del cinema</label>
@@ -332,6 +345,13 @@ if(isset($_GET["id"])){
     let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     });
+    let immagineUp = document.getElementById('immagine');
+    immagineUp.onchange = evt => {
+        const [file] = immagineUp.files;
+        if(file){
+            document.getElementById('imgCop').src = URL.createObjectURL(file);
+        }
+    };
     let sale = [];
     <?php
     if(isset($_GET["id"])){
@@ -376,6 +396,7 @@ if(isset($_GET["id"])){
         let sel = form.getElementsByTagName('select')[0];
         let valid = true;
         for (let i = 0; i < inputs.length; i++){
+            if (inputs[i].type == 'file') continue;
             if(!inputs[i].checkValidity()){
                 valid = false;
                 inputs[i].classList.add("is-invalid");
@@ -413,7 +434,28 @@ if(isset($_GET["id"])){
                 sale: sale,
                 <?php if(!isset($_GET["id"])) { echo "add: true"; } else{ echo "edit: true, id: " . $_GET["id"]; } ?>
             }, function (data, status) {
-                location.href = "gestisci-tutti-cinema.php";
+                if(immagineUp.files[0]){
+                    let frm = document.createElement("form");
+                    let img = document.createElement("input");
+                    let id = document.createElement("input");
+                    img.type = "hidden";
+                    img.name = "img";
+                    img.value = true;
+                    id.type = "hidden";
+                    id.name = "id";
+                    id.value = data;
+                    frm.enctype = "multipart/form-data";
+                    frm.action = "modifica-cinema.php";
+                    frm.method = "post";
+                    frm.append(immagineUp);
+                    frm.append(img);
+                    frm.append(id);
+                    frm.classList.add("d-none");
+                    document.body.append(frm);
+                    frm.submit();
+                }else{
+                    location.href = "gestisci-tutti-cinema.php";
+                }
             });
         }
     }

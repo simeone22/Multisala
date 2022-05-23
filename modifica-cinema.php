@@ -25,12 +25,13 @@ if(isset($_POST["add"])){
         http_response_code(400);
         exit();
     }
+    $id = $connessione->insert_id;
     $query = "INSERT INTO Sale(CodiceSala, idFCinema) VALUES";
     $query1 = "INSERT INTO Posti(idFSala, Colonna, Riga) VALUES";
     for($i = 0; $i < count($sale); $i++){
-        $query .= "('" . ($sale[$i]["codice"]) . "', $connessione->insert_id),";
+        $query .= "('" . ($sale[$i]["codice"]) . "', $id),";
         for($j = 0; $j < count($sale[$i]["posti"]); $j++){
-            $query1 .= "((SELECT IDSala FROM Sale WHERE CodiceSala = '" . $sale[$i]["codice"] . "' AND idFCinema = " . $connessione->insert_id . "), '" . ($sale[$i]["posti"][$j]["colonna"]) . "', '" . ($sale[$i]["posti"][$j]["riga"]) . "'), ";
+            $query1 .= "((SELECT IDSala FROM Sale WHERE CodiceSala = '" . $sale[$i]["codice"] . "' AND idFCinema = " . $id . "), '" . ($sale[$i]["posti"][$j]["colonna"]) . "', '" . ($sale[$i]["posti"][$j]["riga"]) . "'), ";
         }
     }
     $query = substr($query, 0, -1);
@@ -47,6 +48,12 @@ if(isset($_POST["add"])){
         http_response_code(400);
         exit();
     }
+    if(!copy("Media/Cinema/default.png", "Media/Cinema/" . $id . ".png")){
+        $_SESSION["error"] = "Errore nella inserimento dell'immagine";
+        http_response_code(400);
+        exit();
+    }
+    echo $id;
     $_SESSION["success"] = "Cinema inserito con successo";
     exit();
 }elseif(isset($_POST["edit"])){
@@ -103,6 +110,7 @@ if(isset($_POST["add"])){
         http_response_code(400);
         exit();
     }
+    echo $id;
     $_SESSION["success"] = "Cinema aggiornato con successo";
     exit();
 }elseif(isset($_POST["elimina"])){
@@ -183,5 +191,15 @@ if(isset($_POST["add"])){
         exit();
     }
     $_SESSION["success"] = "Proiezione eliminata con successo";
+    exit();
+}elseif(isset($_POST["img"])){
+    $id = $_POST["id"];
+    if(!copy($_FILES["immagine"]["tmp_name"], "Media/Cinema/" . $id . ".png")){
+        $_SESSION["error"] = "Errore nella modifica dell'immagine";
+        header("Location: gestisci-tutti-cinema.php");
+        exit();
+    }
+    $_SESSION["success"] = "Immagine modificata con successo";
+    header("Location: gestisci-tutti-cinema.php");
     exit();
 }

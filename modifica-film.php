@@ -50,6 +50,11 @@ if(isset($_POST["add"])){
         http_response_code(404);
         exit();
     }
+    if(!copy("Media/Film/default.png", "Media/Film/" . $id . ".png")){
+        $_SESSION["error"] = "Errore nella modifica dell'immagine";
+        header("Location: gestisci-tutti-film.php");
+        exit();
+    }
     echo $id;
     $_SESSION["success"] = "Film inserito con successo";
     exit();
