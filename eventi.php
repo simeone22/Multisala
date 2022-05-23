@@ -18,22 +18,23 @@
 <?php include "navbar.php" ?>
 <h2 class="page-heading mt-5 mb-5" style="padding-left: 20px;"><i class="fa-solid fa-calendar"></i> Eventi </h2>
 <div class="container text-center" style="max-width: 200%; margin-top: 20px;">
-    <div aria-labelledby="<?php
+    <?php
     $sql = "SELECT * FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1";
     $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
     or die("Errore di connessione al database");
     $result = $connessione->query($sql);
     if($result->num_rows > 0){
-     while($row = $result->fetch_assoc()){
-         echo $row["IDFilm"];
-    ?>" id="<?php echo $row["IDFilm"];?>">
-        <div class="card card-body" data-parent="<?php echo $row["IDFilm"];?>" style="position: relative; height: 620px;">
+    while($row = $result->fetch_assoc()){
+    $row["IDFilm"];
+    ?>
+    <div aria-labelledby="<?php $row["IDFilm"]; ?>" id="<?php $row["IDFilm"]; ?>"/>
+        <div class="card card-body" data-parent="<?php $row["IDFilm"];?>" style="position: relative; height: 600px;">
             <div class="container align-middle" style="padding-top: 50px;">
                 <div class="row d-flex">
                     <div class="col-3 d-flex justify-content-center">
-                        <form action="" method="get" style="height: 28%;">
-                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 100%;">
-                        </form>
+                        <a href="informazioni-eventi.php">
+                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
+                        </a>
                     </div>
                     <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
                         <h2 class="visible text-start" style="padding-bottom: 3px;">
@@ -47,11 +48,11 @@
                         <p><?php echo $row["OraInizio"]?></p>
                         <div id="example" class="accordion-item">
                             <p id="headingOne" class="accordion-header">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dd" aria-expanded="false" aria-controls="dd">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#d-<?php echo $row["IDFilm"]; ?>" aria-expanded="false" aria-controls="d-<?php echo $row["IDFilm"]; ?>">
                                     <strong>Descrizione</strong>
                                 </button>
                             </p>
-                            <div id="dd" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
+                            <div id="d-<?php echo $row["IDFilm"]; ?>" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
                                 <div class="accordion-body">
                                     <p>
                                         <?php

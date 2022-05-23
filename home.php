@@ -34,89 +34,36 @@
         </div>
         <div style="padding-left: 30px">
             <div class="row" style="width: 100%;">
-                <div class="col-sm-7" style="padding-bottom: 40px;">
+        <?php
+        $sql = "SELECT * FROM Cinema";
+        $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+        or die("Errore di connessione al database");
+        $result = $connessione->query($sql);
+        if ($result->num_rows > 0){
+        while ($row = $result->fetch_assoc()){
+        ?>
+                <div class="col-sm-6 justify-content-center d-flex" style="padding-bottom: 40px;">
                     <div class="card border-secondary" style="width: 30rem;">
                         <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
                             <div class="carousel-inner">
                                 <div class="carousel-item active">
-                                    <img class="d-block" src="https://www.casaangelini.it/wp-content/uploads/2019/08/Dove-Andare-Cinema-Riccione-Cinepalace-Multisala-Centro.jpg" alt="..." style="width: 500px; height: 270px;">
+                                    <img class="d-block" src="Media/Cinema/<?php echo $row["IDCinema"]?>.png" alt="..." style="width: 500px; height: 270px;">
                                 </div>
                             </div>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">
-                                Cinepalace
+                                <?php echo $row["NomeCinema"]?>
                                 <br>
-                                Riccione
+                                <?php echo $row["Comune"]?>
                             </h5>
                             <hr class="featurette-divider">
-                            <p class="card-text">Viale Gramsci, 59 c, 47838</p>
+                            <p class="card-text"><?php echo $row["Indirizzo"] .  ", " .  $row["CAP"]?></p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-5" style="padding-bottom: 40px;">
-                    <div class="card border-secondary" style="width: 30rem;">
-                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img class="d-block" src="https://zero-media.s3.amazonaws.com/uploads/2015/05/Eliseo-multisala-cinema-cultura-milano-film.jpg" alt="..." style="width: 500px; height: 270px;">
-                                </div>
-                                <div class="carousel-item">
-                                    <img class="d-block" src="https://www.riminitoday.it/~media/horizontal-hi/50118623643228/palacongressi-riccione-3.jpg" alt="..." style="width: 500px; height: 270px;">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Cinema Eliseo Multisala
-                                <br>
-                                Milano
-                            </h5>
-                            <hr class="featurette-divider">
-                            <p class="card-text">Via Torino, 64</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-7" style="padding-bottom: 40px;">
-                    <div class="card border-secondary" style="width: 30rem;">
-                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img class="d-block" src="https://www.cinepark.it/cento/image/slide/serizio-bar-cinepark-cento.jpg" alt="..." style="width: 500px; height: 270px;">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Cinema Apollo
-                                <br>
-                                Comacchio
-                            </h5>
-                            <hr class="featurette-divider">
-                            <p class="card-text">Via Matteo Loves, 17</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-5" style="padding-bottom: 40px;">
-                    <div class="card border-secondary" style="width: 30rem;">
-                        <div id="caroselloImmagini" class="carousel slide card-img-top" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img class="d-block" src="https://zero-media.s3.amazonaws.com/uploads/2015/06/Ducale-Multisala-Cinema-Milano-Cultura-Film.jpg" alt="..." style="width: 500px; height: 270px;">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                Cinema Ducale
-                                <br>
-                                Milano
-                            </h5>
-                            <hr class="featurette-divider">
-                            <p class="card-text">Piazza Napoli, 27</p>
-                        </div>
-                    </div>
-                </div>
+        <?php
+        }}?>
             </div>
         </div>
         <div class="container">
