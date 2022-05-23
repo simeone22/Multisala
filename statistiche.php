@@ -90,10 +90,10 @@ if(!$result){
             }
         }
     });
-    function impostaGiornoProiezioni(){
-        location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value;
-    }
     function impostaGiornoProiezioni(tipo){
+        if(tipo === undefined){
+            location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value;
+        }
         location.href = "statistiche.php?data=" + document.getElementById('giornoProiezioni').value + "&tipo=" + tipo;
     }
 </script>

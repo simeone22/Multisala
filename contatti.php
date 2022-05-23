@@ -44,9 +44,13 @@
                     $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
                     or die("Connessione fallita: " . mysqli_connect_error());
                     $sql = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 1");
+                    if(!$sql){
+                        echo "\">Tua mamma";
+                    }else{
                     $row = $sql->fetch_assoc();
                     echo $row["Telefono"];
                     ?>"><?php
+                        }
                         echo $row["Telefono"];
                         ?></a></p>
                 <p>Puoi trovarlo dalle 8.30 fino alle 16.00 nei giorni lavorativi.</p>
