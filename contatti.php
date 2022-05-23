@@ -16,11 +16,17 @@
 <body class="position-relative min-h-100">
 <?php include "toasts.php";?>
 <?php include "navbar.php" ?>
+<?php
+$connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+or die("Connessione fallita: " . mysqli_connect_error());
+$sql = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 1");
+$row = $sql->fetch_assoc();
+?>
     <div class="container">
         <h2 class="page-heading mt-5 mb-5"><i class="fa-solid fa-circle-phone"></i> Pagina contatti </h2>
         <div class="min-h-85" style="margin-top: 20px;">
             <div class="w-50 float-start mb-5">
-                <form action="invia-mail-contatto.php" class="w-50 m-auto border border-3 h-50 px-3 py-4 rounded-3" method="post">
+                <form action="invia-mail-contatto.php" class="float-start w-75 border border-3 h-50 px-3 py-4 rounded-3" method="post">
                     <p class="fs-2 fw-bold text-center">Contattaci</p>
                     <div class="form-floating mb-3">
                         <input type="email" name="email" placeholder="Email" id="email" class="form-control" required>
@@ -40,21 +46,12 @@
             <div class="w-50 float-end">
                 <p class="fs-2 fw-bold text-center">Ulteriori contatti</p>
                 <p class="fs-5">Per problematiche o ulteriori informazioni, contattare il direttore:</p>
-                <p>Telefono: <a href="tel:<?php
-                    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
-                    or die("Connessione fallita: " . mysqli_connect_error());
-                    $sql = mysqli_query($connessione, "SELECT * FROM Utenti WHERE idFRuolo = 1");
-                    if(!$sql){
-                        echo "\">Tua mamma";
-                    }else{
-                    $row = $sql->fetch_assoc();
-                    echo $row["Telefono"];
-                    ?>"><?php
-                        }
-                        echo $row["Telefono"];
-                        ?></a></p>
-                <p>Puoi trovarlo dalle 8.30 fino alle 16.00 nei giorni lavorativi.</p>
-                <p>Dalle 9.00 alle 12.00 durante i giorni festivi.</p>
+                <?php if(isset($_POST["Telefono"])){?>
+                <p><i class="fa-solid fa-phone me-2"></i>Telefono: <a href="tel:<?php echo $row["Telefono"];?>"><?php echo $row["Telefono"];?></a></p>
+                <?php }?>
+                <p><i class="fa-solid fa-envelope me-2"></i>Email: <a href="mailto:<?php echo $row["Email"];?>"><?php echo $row["Email"];?></a></p>
+                <p><i class="fa-solid fa-briefcase-blank me-2"></i>Puoi trovarlo dalle 8.30 fino alle 16.00 nei giorni lavorativi.</p>
+                <p><i class="fa-solid fa-cross me-2"></i>Dalle 9.00 alle 12.00 durante i giorni festivi.</p>
             </div>
         </div>
     </div>
