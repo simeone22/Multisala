@@ -26,14 +26,14 @@
       $result = $connessione->query($sql);
       if($result->num_rows > 0){
       while($row = $result->fetch_assoc()){
-      $row["IDFilm"];
+       $row["IDFilm"];
       ?>
-      <div aria-labelledby="<?php $row["IDFilm"];?>" id="<?php $row["IDFilm"];?>"/>
-          <div class="card card-body" data-parent="<?php $row["IDFilm"];?>" style="position: relative; height: 620px;">
+      <div aria-labelledby="<?php echo $row["IDFilm"];?>" id="<?php echo $row["IDFilm"];?>"/>
+          <div class="card card-body" data-parent="<?php echo $row["IDFilm"];?>" style="position: relative; height: 620px;">
              <div class="container align-middle" style="padding-top: 50px;">
                  <div class="row d-flex">
                      <div class="col-3 d-flex justify-content-center">
-                         <a href='informazioni.php?id=" <?php $row["IDFilm"]?> "'>
+                         <a href='informazioni.php?id=<?php echo $row["IDFilm"]; ?>'>
                              <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
                          </a>
                      </div>

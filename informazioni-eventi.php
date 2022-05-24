@@ -9,177 +9,100 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="Media/fontawesome/css/all.css">
     <link rel="stylesheet" href="Media/CSS/checkAnimation.css">
+    <link rel="stylesheet" href="Media/CSS/fade-text.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
-    <title>Specifiche film - Multisala</title>
+    <title>Eventi - Multisala</title>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
-<?php
-if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["logged"] == false){
-    header("Location: home.php");
-    exit();
-}
-$nome = "";
-$trama = "";
-$durata = "";
-$connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
-or die("Connessione fallita: " . mysqli_connect_error());
-if(isset($_GET["id"])){
-    $result = mysqli_query($connessione, "SELECT * FROM Film WHERE IDFilm = " . $_GET["id"])
-    or die("Query fallita: " . mysqli_error($connessione));
-    $row = mysqli_fetch_array($result);
-    $nome = $row["NomeFilm"];
-    $trama = $row["Trama"];
-    $durata = $row["Durata"];
-    $result = mysqli_query($connessione, "SELECT * FROM CategorieFilm WHERE idFFilm = " . $_GET["id"] . " ORDER BY idFCategoria");
-    $categorie = $result->fetch_all(MYSQLI_ASSOC);
-    $result = mysqli_query($connessione, "SELECT * FROM AttoriFilm WHERE idFFilm = " . $_GET["id"] . " ORDER BY idFAttore");
-    $attori = $result->fetch_all(MYSQLI_ASSOC);
-}
-?>
 <?php include "navbar.php" ?>
-<p class="fs-1 m-3 mb-5"><i class="fa-solid fa-camera-movie me-3"></i>Specifiche eventi</p>
-<a href="film.php" class="btn btn-outline-dark m-3 w-25 mb-5"><i class="fa-solid fa-circle-arrow-left me-2"></i>Torna indietro</a>
-<div class="w-75 m-auto mb-5">
-    <form action=".php" enctype="multipart/form-data" method="post">
-        <?php
-        if(!isset($_GET["id"])){
-            echo "<input type='hidden' name='add' value='true'>";
-        }
-        ?>
-        <div>
-            <img src="Media/Film/<?php
-            if(isset($_GET["id"])){
-                echo $_GET["id"];
-            }else {
-                echo "default";
-            }
-            ?>.png" class="mb-3 w-25 mx-auto d-block" id="imgCop">
-        </div>
-        <div class="form-floating mb-3">
-            <input type="file" class="form-control" name="immagine" placeholder="Copertina" id="immagine" accept="image/png">
-            <label for="immagine">Copertina</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="nome" placeholder="Nome del film" id="nome" value="<?php echo $nome?>" readonly>
-            <label for="nome">Nome del film</label>
-        </div>
-        <div class="form-floating mb-3">
-            <select name="categoria" id="categoria" class="form-select" multiple aria-readonly="true">
-                <?php
-                $sql = mysqli_query($connessione, "SELECT * FROM Categorie ORDER BY IDCategoria");
-                $pcat = 0;
-                while($row = $sql->fetch_assoc()){?>
-                    <?php
-                    echo "<option value=\"" . $row["IDCategoria"] . "\"";
-                    if(isset($_GET["id"])){
-                        if($pcat < count($categorie)) {
-                            if ($row["IDCategoria"] == $categorie[$pcat]["idFCategoria"]) {
-                                echo " selected";
-                                $pcat++;
+<div class="container text-center" style="max-width: 200%; margin-top: 20px;">
+    <?php
+    $sql = "SELECT * FROM (Film INNER JOIN Proiezioni ON Film.IDFilm = Proiezioni.idFFilm) INNER JOIN Sale ON Proiezioni.idFSala = Sale.IDSala WHERE Privata = 1 AND IDFilm = " .$_GET["id"];
+    $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
+    or die("Errore di connessione al database");
+    $result = $connessione->query($sql);
+    if($result->num_rows > 0){
+    $row = $result->fetch_assoc()
+    ?>
+    <div aria-labelledby="<?php echo $row["IDFilm"]; ?>" id="<?php echo $row["IDFilm"]; ?>"/>
+    <div class="card card-body" data-parent="<?php $row["IDFilm"];?>" style="position: relative; height: 600px;">
+        <div class="container align-middle" style="padding-top: 50px;">
+            <div class="row d-flex">
+                <div class="col-3 d-flex justify-content-center">
+                    <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
+                </div>
+                <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">
+                    <h2 class="visible text-start" style="padding-bottom: 3px;">
+                        <strong><?php echo $row["NomeFilm"] ?></strong>
+                    </h2>
+                    <strong>Sala</strong>
+                    <p> <?php echo $row["CodiceSala"]?> </p>
+                    <strong>Durata</strong>
+                    <p> <?php echo $row["Durata"]?> min </p>
+                    <strong>Attori</strong>
+                    <p><?php
+                        $query = "SELECT Nome, Cognome FROM Attori INNER JOIN AttoriFilm ON Attori.IDAttore = AttoriFilm.idFAttore WHERE idFFilm = ". $row["IDFilm"];
+                        $risultato = $connessione->query($query);
+                        if($risultato->num_rows > 0){
+                            $attori = [];
+                            while($r = $risultato->fetch_assoc()){
+                                $attori[] = $r["Nome"] . " " . $r["Cognome"];
                             }
-                        }
-                    }
-                    echo ">" . $row["NomeCategoria"] . "</option>";
-                } ?>
-            </select>
-        </div>
-        <div class="input-group row g-1 mb-3">
-            <div class="form-floating col-11">
-                <select name="attori" id="attori" class="form-select" multiple aria-readonly="true">
-                    <?php
-                    $sql = mysqli_query($connessione, "SELECT * FROM Attori");
-                    $pcat = 0;
-                    while($row = $sql->fetch_assoc()){?>
+                            echo implode(", ", $attori);
+                        }?></p>
+                    <strong>Ora d'inizio</strong>
+                    <p><?php
+                        echo (new DateTime($row["OraInizio"]))->format('H:i d/m/Y')?></p>
+                    <strong>Valutazione</strong>
+                    <p>
                         <?php
-                        echo "<option value=\"" . $row["IDAttore"] . "\"";
-                        if(isset($_GET["id"])){
-                            if($pcat < count($attori)) {
-                                if ($row["IDAttore"] == $attori[$pcat]["idFAttore"]) {
-                                    echo " selected";
-                                    $pcat++;
-                                }
+                        $q = "SELECT AVG(Voto) AS media FROM Recensioni INNER JOIN Film ON Recensioni.idFFilm = Film.IDFilm WHERE idFFilm = " . $row["IDFilm"];
+                        $ris = $connessione->query($q);
+                        if ($ris->num_rows > 0){
+                            $rw = $ris->fetch_assoc();
+                            $voto = $rw["media"];
+                            for ($i = 0; $i < 5; $i++){
+                                if($i < $voto)
+                                    echo "<i class='fa-solid fa-star me-1' style='color: #f1c40f'></i>";
+                                else
+                                    echo "<i class='fa-solid fa-star me-1 text-secondary'></i>";
                             }
                         }
-                        echo ">" . $row["Nome"] . " " . $row["Cognome"] . "</option>";
-                    } ?>
-                </select>
+                        ?>
+                    </p>
+                    <div id="example" class="accordion-item">
+                        <p id="headingOne" class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#d-<?php echo $row["IDFilm"]; ?>" aria-expanded="false" aria-controls="d-<?php echo $row["IDFilm"]; ?>">
+                                <strong>Descrizione</strong>
+                            </button>
+                        </p>
+                        <div id="d-<?php
+
+                        echo $row["IDFilm"]; ?>" class="accordion-collapse overflow-auto h-25 collapse" aria-labelledby="headingOne" data-bs-parent="#example">
+                            <div class="accordion-body">
+                                <p>
+                                    <?php
+                                    if(strlen($row["Trama"]) > 478){
+                                        $row["Trama"] = substr($row["Trama"], 0, 478) . "...";
+                                        echo $row["Trama"];
+                                    }
+                                    else {
+                                        echo $row["Trama"];
+                                    }
+                                    ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="form-floating my-3">
-            <textarea class="form-control" placeholder="Trama" type="text" name="trama" id="trama" style="height: 310px;" readonly><?php echo $trama?></textarea>
-            <label for="trama">Trama</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="number" class="form-control" name="durata" placeholder="durata" id="durata" value="<?php echo $durata?>" readonly>
-            <label for="durata">Durata</label>
-        </div>
-    </form>
-    <a class="btn btn-danger" href="film.php">Annulla</a>
-    <?php
-    if ($_SESSION["tipoutente"] == 3){
-        ?>
-        <button class="btn btn-primary float-end" onclick="prenotati.php">Prenotati</button>
-        <?php
-    }
-    ?>
+    </div>
 </div>
-
-<script>
-    let immagineUp = document.getElementById('immagine');
-    immagineUp.onchange = evt => {
-        const [file] = immagineUp.files;
-        if(file){
-            document.getElementById('imgCop').src = URL.createObjectURL(file);
-        }
-    }
-    //TODO: generare in json php
-    function checkForm(){
-        let form = document.getElementsByTagName("form")[0]
-        let inputs = form.getElementsByTagName('input');
-        let valid = true;
-        for (let i = 0; i < inputs.length; i++){
-            if (inputs[i].type == 'file') continue;
-            if(!inputs[i].checkValidity()){
-                valid = false;
-                inputs[i].classList.add("is-invalid");
-            }else {
-                inputs[i].classList.remove("is-invalid");
-            }
-        }
-
-        if(valid) {
-            let dati = {
-                nome: document.getElementById("nome").value,
-                trama: document.getElementById("trama").value,
-                durata: document.getElementById("durata").value,
-                categorie: Array.from(document.getElementById('categoria').options).filter(opt => opt.selected).map(opt => opt.value),
-            };
-            $.post("modifica-film.php", dati, function (data, status) {
-                if(immagineUp.files[0]){
-                    let frm = document.createElement("form");
-                    let img = document.createElement("input");
-                    let id = document.createElement("input");
-                    img.type = "hidden";
-                    img.name = "img";
-                    img.value = true;
-                    id.type = "hidden";
-                    id.name = "id";
-                    id.value = data;
-                    frm.enctype = "multipart/form-data";
-                    frm.action = "modifica-film.php";
-                    frm.method = "post";
-                    frm.append(immagineUp);
-                    frm.append(img);
-                    frm.append(id);
-                    frm.classList.add("d-none");
-                    document.body.append(frm);
-                    frm.submit();
-                }
-            });
-        }
-    }
-</script>
+<?php
+}?>
+</div>
 </body>
 </html>

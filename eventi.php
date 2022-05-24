@@ -26,14 +26,13 @@
     $result = $connessione->query($sql);
     if($result->num_rows > 0){
     while($row = $result->fetch_assoc()){
-    $row["IDFilm"];
     ?>
-    <div aria-labelledby="<?php $row["IDFilm"]; ?>" id="<?php $row["IDFilm"]; ?>"/>
-        <div class="card card-body" data-parent="<?php $row["IDFilm"];?>" style="position: relative; height: 600px;">
+    <div aria-labelledby="<?php echo $row["IDFilm"]; ?>" id="<?php echo $row["IDFilm"]; ?>"/>
+        <div class="card card-body" data-parent="<?php echo $row["IDFilm"];?>" style="position: relative; height: 600px;">
             <div class="container align-middle" style="padding-top: 50px;">
                 <div class="row d-flex">
                     <div class="col-3 d-flex justify-content-center">
-                        <a href="informazioni-eventi.php">
+                        <a href="informazioni-eventi.php?id=<?php echo $row["IDFilm"]; ?>">
                             <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
                         </a>
                     </div>
@@ -45,8 +44,20 @@
                         <p> <?php echo $row["CodiceSala"]?> </p>
                         <strong>Durata</strong>
                         <p> <?php echo $row["Durata"]?> min </p>
+                        <strong>Attori</strong>
+                        <p><?php
+                            $query = "SELECT Nome, Cognome FROM Attori INNER JOIN AttoriFilm ON Attori.IDAttore = AttoriFilm.idFAttore WHERE idFFilm = ". $row["IDFilm"];
+                            $risultato = $connessione->query($query);
+                            if($risultato->num_rows > 0){
+                                $attori = [];
+                                while($r = $risultato->fetch_assoc()){
+                                    $attori[] = $r["Nome"] . " " . $r["Cognome"];
+                                }
+                                echo implode(", ", $attori);
+                            }?></p>
                         <strong>Ora d'inizio</strong>
-                        <p><?php echo $row["OraInizio"]?></p>
+                        <p><?php echo
+                            (new DateTime($row["OraInizio"]))->format('H:i d/m/Y')?></p>
                         <div id="example" class="accordion-item">
                             <p id="headingOne" class="accordion-header">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#d-<?php echo $row["IDFilm"]; ?>" aria-expanded="false" aria-controls="d-<?php echo $row["IDFilm"]; ?>">
