@@ -74,7 +74,7 @@ $position = explode(".php", array_slice(explode("/", $_SERVER["REQUEST_URI"]), -
                         $PCount = 0;
                         if (isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0) {
                             for ($i = 0; $i < count($_SESSION["carrello"]); $i++) {
-                                $PCount += $_SESSION["carrello"][$i]["quantita"];
+                                $PCount += count($_SESSION["carrello"][$i]["posti"]);
                             }
                         }
                         echo '<span class="badge bg-secondary">' . $PCount . '</span>';

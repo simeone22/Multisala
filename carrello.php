@@ -13,6 +13,30 @@
     <script src="https://js.stripe.com/v3/"></script>
     <link rel="icon" href="Media/Immagini/logo.png">
     <title>Carrello - Multisala</title>
+    <style>
+        .biglietto{
+            width: 520px;
+            height: 242px;
+            background: no-repeat, url('Media/Immagini/biglietto-1.png');
+            background-size: cover;
+            position: relative;
+        }
+        .biglietto p{
+            font-weight: bold;
+            font-size: .8rem;
+            text-align: center;
+            width: 40%;
+            position: absolute;
+            left: 40%;
+            top: 25%;
+        }
+        .biglietto p:nth-child(2){
+            top: 42.5%;
+        }
+        .biglietto p:nth-child(3){
+            top: 56%;
+        }
+    </style>
 </head>
 <body class="d-flex flex-column h-100">
 <?php include "toasts.php";?>
@@ -23,6 +47,7 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
     exit();
 }
 $totale = 0;
+$modificato = false;
 if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
     function getElById($arr, $id) {
         foreach ($arr as $el) {
@@ -33,41 +58,82 @@ if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
         return null;
     }
     $proiezioni = "";
+    //num posti
+    //((SELECT COUNT(IDPosto) FROM Posti AS P2 WHERE P2.idFSala = PR.idFSala) - (SELECT COUNT(IDPrenotazione) FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione)) > " . count($_SESSION["carrello"][$i]["posti"]) .
     for ($i = 0; $i < count($_SESSION["carrello"]); $i++) {
-        $proiezioni = " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND ((SELECT COUNT(IDPosto) FROM Posti AS P2 WHERE P2.idFSala = PR.idFSala) - (SELECT COUNT(IDPrenotazione) FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione)) > " . $_SESSION["carrello"][$i]["quantita"] . ") OR";
+        $posti = "";
+        for($j = 0; $j < count($_SESSION["carrello"][$i]["posti"]); $j++){
+            $posti .= $_SESSION["carrello"][$i]["posti"][$j] . ",";
+        }
+        $posti = substr($posti, 0, -1);
+        $proiezioni .= " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND (SELECT 1 FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione AND idFPosto NOT IN(" . $posti . ")) AND OraInizio > now()) OR";
     }
     $proiezioni = substr($proiezioni, 0, -2);
+    $query = "SELECT IDProiezione, IDFilm, NomeFilm, IDCinema, NomeCinema, Indirizzo, Comune, CAP, OraInizio, Prezzo FROM ((Proiezioni PR INNER JOIN Film F on PR.idFFilm = F.IDFilm) INNER JOIN Sale S ON S.IDSala = PR.idFSala) INNER JOIN Cinema C ON C.IDCinema = S.idFCinema WHERE " . $proiezioni . " ORDER BY IDProiezione";
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322);
-    $result = mysqli_query($connessione, "SELECT IDProiezione, IDFilm, NomeFilm, IDCinema, NomeCinema, Indirizzo, Comune, CAP, OraInizio, Prezzo FROM ((Proiezioni PR INNER JOIN Film F on PR.idFFilm = F.IDFilm) INNER JOIN Sale S ON S.IDSala = PR.idFSala) INNER JOIN Cinema C ON C.IDCinema = S.idFCinema WHERE " . $proiezioni . " ORDER BY IDProiezione");
+    $result = mysqli_query($connessione, $query);
     $elementi = [];
+    $idProiezioni = [];
     while($row = mysqli_fetch_assoc($result)){
         $totale += $row["Prezzo"];
         $elementi[] = [
             "name" => $row["NomeFilm"],
             "amount" => $row["Prezzo"] * 100,
             "currency" => "eur",
-            "quantity" => getElById($_SESSION["carrello"], $row["IDProiezione"])["quantita"]
+            "quantity" => count(getElById($_SESSION["carrello"], $row["IDProiezione"])["posti"])
         ];
+        $idProiezioni[] = $row["IDProiezione"];
     }
-    \Stripe\Stripe::setApiKey("sk_test_51I8qSeAfwq1vwFIheK11FCMXaeso3dI1eaDW6yFKXIwFD5tTGoYEnmC6DRAy4zabBbFX5R1K0W9l0LUlH1bRXAbH00i60GNZjL");
-    $urlbase = "https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
-    $urlbase = substr($urlbase, 0, strpos($urlbase, "carrello.php"));
-    $session = \Stripe\Checkout\Session::create([
-        "payment_method_types" => ["card"],
-        "line_items" => $elementi,
-        "success_url" => $urlbase . "pagamento.php",
-        "cancel_url" => $urlbase . "carrello.php"
-    ]);
+    $carrello = [];
+    for($i = 0; $i < count($idProiezioni); $i++){
+        $carrello[] = array_filter($_SESSION["carrello"], function($el) use ($idProiezioni, $i){
+            return $el["id"] == $idProiezioni[$i];
+        })[0];
+    }
+    if($_SESSION["carrello"] != $carrello){
+        $modificato = true;
+    }
+    $_SESSION["carrello"] = $carrello;
+    $result1 = mysqli_query($connessione, "SELECT * FROM Utenti WHERE Username = '" . $_SESSION["username"] . "'");
+    $utente = mysqli_fetch_assoc($result1);
+    if(count($elementi) > 0) {
+        \Stripe\Stripe::setApiKey("sk_test_51I8qSeAfwq1vwFIheK11FCMXaeso3dI1eaDW6yFKXIwFD5tTGoYEnmC6DRAy4zabBbFX5R1K0W9l0LUlH1bRXAbH00i60GNZjL");
+        $urlbase = "https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+        $urlbase = substr($urlbase, 0, strpos($urlbase, "carrello.php"));
+        $session = \Stripe\Checkout\Session::create([
+            "payment_method_types" => ["card"],
+            "customer_email" => $utente["Email"],
+            "line_items" => $elementi,
+            "success_url" => $urlbase . "pagamento.php",
+            "cancel_url" => $urlbase . "carrello.php"
+        ]);
+    }
 }
 ?>
 <?php include "navbar.php" ?>
 <p class="fs-1 m-3 mb-5"><i class="fa-solid fa-cart-shopping me-3"></i>Carrello</p>
 <?php
+if($modificato){?>
+    <div class="alert alert-danger mx-5" role="alert">
+        Uno o più biglietti non sono più disponibili!
+        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php }
 if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
-    $_SESSION["carrello"] = array(array("id" => 1, "quantita" => 1));
+    $result->data_seek(0);
+    while($row = mysqli_fetch_assoc($result)){?>
+    <div class="biglietto mx-auto my-5">
+        <p><?php echo $row["NomeFilm"]?></p>
+        <p><?php echo "Cinema " . $row["NomeCinema"]?></p>
+        <p>
+            <font class="float-start">Posti:&nbsp;<span><?php echo count(getElById($_SESSION["carrello"], $row["IDProiezione"])["posti"])?></span></font>
+            <font class="float-end">Ora:&nbsp;<span><?php echo (new DateTime($row["OraInizio"]))->format("H:i d/m/Y");?></span></font>
+        </p>
+    </div>
+<?php }
 }else{?>
 <p class="fs-1 bg-warning text-center position-absolute start-0 top-50 translate-middle-y py-2 w-100">Il carrello è vuoto!</p>
-<?php } ?>
+<?php }?>
 <div class="position-fixed bottom-0 w-100 border border-2 p-5 bg-light" style="z-index: 2">
     <span class="fs-4">Totale previsto: <span class="fw-bold"><?php echo number_format($totale, 2); ?>€</span></span><br>
     <button type="button" class="position-absolute end-0 top-50 translate-middle-y me-5 btn btn-primary fs-4 w-25<?php if($totale == 0) echo " disabled";?>" id="procediPagamento">Procedi al pagamento</button>

@@ -81,7 +81,7 @@ if(isset($_GET["id"])){
             <div class="invalid-feedback">Il responsabile deve avere una mail.</div>
         </div>
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="codiceFiscale" placeholder="codicefiscale" id="codiceFiscale" maxlength="16" minlength="16" value="<?php echo $codicefiscale?>" required>
+            <input type="text" class="form-control" style="text-transform: uppercase" name="codiceFiscale" placeholder="codicefiscale" id="codiceFiscale" maxlength="16" minlength="16" value="<?php echo $codicefiscale?>" pattern="([A-Z][A-Z][A-Z][A-Z][A-Z][A-Z])([0-9][0-9])([A-Z])([0-9][0-9])([A-Z])([0-9][0-9][0-9])([A-Z])" required>
             <label for="codiceFiscale">Codice fiscale</label>
             <div class="invalid-feedback">Il responsabile deve avere un codice fiscale.</div>
         </div>

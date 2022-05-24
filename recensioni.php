@@ -39,7 +39,7 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
                         while($row = $result->fetch_assoc()){
                             $id_recensione = $row["IDRecensione"];
                             $voto = $row["Voto"];
-                            $commento = $row["Testo"];
+                            $commento = htmlspecialchars($row["Testo"]);
                             $idfilm = $row["IDFilm"];
                             $nomefilm = $row["NomeFilm"];
                             echo "<div class='row'>
@@ -59,14 +59,14 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
                             echo "</p>
                                                     </div>
                                                     <div class='col-12 col-md-8'>
-                                                        <p class='card-text'>$commento</p>
+                                                        <p class='card-text testo-commento'>$commento</p>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class='card-footer'>
                                                 <div class='row'>
                                                     <div class='col-12 col-md-4'>
-                                                        <button role='button' class='btn btn-primary' onclick='modificaRecensione($id_recensione, $voto, \"$commento\")'><i class='fa-solid fa-pen-to-square me-2'></i>Modifica</button>
+                                                        <button role='button' class='btn btn-primary' onclick='modificaRecensione($id_recensione, $voto, this.parentElement.parentElement.parentElement.parentElement)'><i class='fa-solid fa-pen-to-square me-2'></i>Modifica</button>
                                                     </div>
                                                     <div class='col-12 col-md-4'>
                                                         <a href='modifica-recensione.php?id=$id_recensione&delete=true' class='btn btn-danger'><i class='fa-solid fa-trash-can me-2'></i>Elimina</a>
@@ -123,7 +123,8 @@ if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) |
     let gray= "#6c757d";
     let yellow = "#f1c40f";
     let stars = document.querySelectorAll(".stars");
-    function modificaRecensione(idR, voto, testo){
+    function modificaRecensione(idR, voto, card){
+        let testo = card.querySelector(".testo-commento").innerHTML;
         for(let i = 0; i < stars.length; i++){
             if(i < voto)
                 stars[i].style.color = yellow;

@@ -51,7 +51,7 @@ if(isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"])){
     </div>
     <div class="input-group row g-3 mb-3">
         <div class="form-floating col-sm">
-            <input type="text" maxlength="16" minlength="16" class="form-control" name="codiceFiscale" placeholder="codicefiscale" id="codicefiscale" required>
+            <input type="text" maxlength="16" minlength="16" style="text-transform: uppercase" class="form-control" name="codiceFiscale" placeholder="codicefiscale" id="codicefiscale" pattern="([A-Z][A-Z][A-Z][A-Z][A-Z][A-Z])([0-9][0-9])([A-Z])([0-9][0-9])([A-Z])([0-9][0-9][0-9])([A-Z])" required>
             <label for="codicefiscale">Codice Fiscale</label>
         </div>
         <div class="form-floating col-sm">

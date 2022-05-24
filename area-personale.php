@@ -54,7 +54,7 @@ $utente = $risultati->fetch_assoc();
             <label for="telefono">Telefono</label>
         </div>
         <div class="form-floating my-3">
-            <input class="form-control" placeholder="Codice fiscale" type="text" maxlength="16" minlength="16" name="codiceFiscale" id="codiceFiscale" value="<?php echo $utente["CodiceFiscale"]?>" required>
+            <input class="form-control" placeholder="Codice fiscale" type="text" maxlength="16" minlength="16" pattern="([A-Z][A-Z][A-Z][A-Z][A-Z][A-Z])([0-9][0-9])([A-Z])([0-9][0-9])([A-Z])([0-9][0-9][0-9])([A-Z])" style="text-transform: uppercase" name="codiceFiscale" id="codiceFiscale" value="<?php echo $utente["CodiceFiscale"]?>" required>
             <label for="codiceFiscale">Codice fiscale</label>
         </div>
         <div class="form-floating my-3">
