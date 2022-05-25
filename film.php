@@ -20,7 +20,7 @@
 <h2 class="page-heading mt-5 mb-5" style="padding-left: 20px;"><i class="fa-solid fa-films"></i> Film </h2>
   <div class="container text-center" style="max-width: 200%; margin-top: 20px;">
       <?php
-      $sql = "SELECT * FROM ((Proiezioni INNER JOIN Film ON Proiezioni.idFFilm = Film.IDFilm) INNER JOIN AttoriFilm ON Film.IDFilm = AttoriFilm.idFFilm) INNER JOIN Attori ON AttoriFilm.idFAttore = Attori.IDAttore WHERE Privata = 0 GROUP BY IDFilm";
+      $sql = "SELECT * FROM ((Film INNER JOIN AttoriFilm ON Film.IDFilm = AttoriFilm.idFFilm) INNER JOIN Attori ON AttoriFilm.idFAttore = Attori.IDAttore) LEFT OUTER JOIN Proiezioni ON Proiezioni.idFFilm = Film.IDFilm WHERE Privata = 0  OR Privata IS NULL GROUP BY IDFilm";
       $connessione = mysqli_connect("localhost", "Baroni", "Baroni", "Multisala_Baroni_Lettiero", 12322)
       or die("Errore di connessione al database");
       $result = $connessione->query($sql);
@@ -34,7 +34,7 @@
                  <div class="row d-flex">
                      <div class="col-3 d-flex justify-content-center">
                          <a href='informazioni.php?id=<?php echo $row["IDFilm"]; ?>'>
-                             <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
+                             <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px; width: 350px;">
                          </a>
                      </div>
                      <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">

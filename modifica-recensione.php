@@ -38,3 +38,21 @@ if(isset($_POST["edit"], $_POST["id"], $_POST["voto"], $_POST["testo"])){
         exit();
     }
 }
+if(isset($_POST["add"], $_POST["voto"], $_POST["testo"], $_POST["film"])){
+    $film = $_POST["film"];
+    $voto = $_POST["voto"];
+    $commento = $_POST["testo"];
+    $query = "INSERT INTO Recensioni(Voto, Testo, idFFilm, idFUtente) SELECT $voto, '$commento', $film, IDUtente FROM Utenti WHERE Username = '".$_SESSION["username"]."'";
+    $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322);
+    $result = $connessione->query($query);
+    if($result){
+        $_SESSION["success"] = "Recensione modificata con successo!";
+        header("Location: recensioni.php");
+        exit();
+    }
+    else{
+        $_SESSION["error"] = "Errore nella modifica della recensione!";
+        header("Location: recensioni.php");
+        exit();
+    }
+}

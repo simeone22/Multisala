@@ -33,7 +33,7 @@
                 <div class="row d-flex">
                     <div class="col-3 d-flex justify-content-center">
                         <a href="informazioni-eventi.php?id=<?php echo $row["IDFilm"]; ?>">
-                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px;">
+                            <img src="<?php echo "Media/Film/". $row["IDFilm"]?>.png" alt="..." style="height: 500px; width: 350px;">
                         </a>
                     </div>
                     <div class="col-7 text-start fs-6 mt-3" style="padding-left: 100px;">

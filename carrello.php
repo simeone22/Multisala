@@ -17,7 +17,7 @@
         .biglietto{
             width: 520px;
             height: 242px;
-            background: no-repeat, url('Media/Immagini/biglietto-1.png');
+            background-repeat: no-repeat;
             background-size: cover;
             position: relative;
         }
@@ -66,7 +66,7 @@ if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
             $posti .= $_SESSION["carrello"][$i]["posti"][$j] . ",";
         }
         $posti = substr($posti, 0, -1);
-        $proiezioni .= " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND (SELECT 1 FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione AND idFPosto NOT IN(" . $posti . ")) AND OraInizio > now()) OR";
+        $proiezioni .= " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND (SELECT 1 FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione AND idFPosto NOT IN(" . $posti . ")) IS NULL AND OraInizio > now()) OR";
     }
     $proiezioni = substr($proiezioni, 0, -2);
     $query = "SELECT IDProiezione, IDFilm, NomeFilm, IDCinema, NomeCinema, Indirizzo, Comune, CAP, OraInizio, Prezzo FROM ((Proiezioni PR INNER JOIN Film F on PR.idFFilm = F.IDFilm) INNER JOIN Sale S ON S.IDSala = PR.idFSala) INNER JOIN Cinema C ON C.IDCinema = S.idFCinema WHERE " . $proiezioni . " ORDER BY IDProiezione";
@@ -75,12 +75,13 @@ if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
     $elementi = [];
     $idProiezioni = [];
     while($row = mysqli_fetch_assoc($result)){
-        $totale += $row["Prezzo"];
+        $quantita = count(getElById($_SESSION["carrello"], $row["IDProiezione"])["posti"]);
+        $totale += $row["Prezzo"] * $quantita;
         $elementi[] = [
             "name" => $row["NomeFilm"],
             "amount" => $row["Prezzo"] * 100,
             "currency" => "eur",
-            "quantity" => count(getElById($_SESSION["carrello"], $row["IDProiezione"])["posti"])
+            "quantity" => $quantita
         ];
         $idProiezioni[] = $row["IDProiezione"];
     }
@@ -121,8 +122,9 @@ if($modificato){?>
 <?php }
 if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
     $result->data_seek(0);
+    $cont = 0;
     while($row = mysqli_fetch_assoc($result)){?>
-    <div class="biglietto mx-auto my-5">
+    <div class="biglietto mx-auto my-5" style="background-image: url('Media/Immagini/biglietto-<?php echo ($cont % 8) + 1?>.png')">
         <p><?php echo $row["NomeFilm"]?></p>
         <p><?php echo "Cinema " . $row["NomeCinema"]?></p>
         <p>
@@ -130,7 +132,9 @@ if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
             <font class="float-end">Ora:&nbsp;<span><?php echo (new DateTime($row["OraInizio"]))->format("H:i d/m/Y");?></span></font>
         </p>
     </div>
-<?php }
+<?php
+    $cont++;
+    }
 }else{?>
 <p class="fs-1 bg-warning text-center position-absolute start-0 top-50 translate-middle-y py-2 w-100">Il carrello è vuoto!</p>
 <?php }?>

@@ -1,8 +1,6 @@
 <?php
 session_start();
-//$_SESSION["carrello"] = array(array("id" => 1, "posti" => [2]));
-//aggiungere le prenotazioni
-if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["tipoutente"] != "1"){
+if(!isset($_SESSION["logged"], $_SESSION["username"], $_SESSION["tipoutente"]) || $_SESSION["tipoutente"] != 3){
     header("Location: home.php");
     exit();
 }
@@ -30,6 +28,7 @@ if(!$result){
     header("Location: carrello.php");
     exit();
 }
+unset($_SESSION["carrello"]);
 $_SESSION["success"] = "Prenotazione effettuata con successo";
 header("Location: carrello.php");
 exit();
