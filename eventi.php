@@ -44,17 +44,6 @@
                         <p> <?php echo $row["CodiceSala"]?> </p>
                         <strong>Durata</strong>
                         <p> <?php echo $row["Durata"]?> min </p>
-                        <strong>Attori</strong>
-                        <p><?php
-                            $query = "SELECT Nome, Cognome FROM Attori INNER JOIN AttoriFilm ON Attori.IDAttore = AttoriFilm.idFAttore WHERE idFFilm = ". $row["IDFilm"];
-                            $risultato = $connessione->query($query);
-                            if($risultato->num_rows > 0){
-                                $attori = [];
-                                while($r = $risultato->fetch_assoc()){
-                                    $attori[] = $r["Nome"] . " " . $r["Cognome"];
-                                }
-                                echo implode(", ", $attori);
-                            }?></p>
                         <strong>Ora d'inizio</strong>
                         <p><?php echo
                             (new DateTime($row["OraInizio"]))->format('H:i d/m/Y')?></p>

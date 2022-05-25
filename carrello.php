@@ -66,11 +66,10 @@ if(isset($_SESSION["carrello"]) && count($_SESSION["carrello"]) > 0){
             $posti .= $_SESSION["carrello"][$i]["posti"][$j] . ",";
         }
         $posti = substr($posti, 0, -1);
-        $proiezioni .= " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND (SELECT 1 FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione AND PR2.idFPosto NOT IN(" . $posti . ")) IS NULL AND OraInizio > now()) OR";
+        $proiezioni .= " (IDProiezione = " . $_SESSION["carrello"][$i]["id"] . " AND (SELECT COUNT(IDPrenotazione) FROM Prenotazioni AS PR2 WHERE PR2.idFProiezione = PR.IDProiezione AND PR2.idFPosto IN(" . $posti . ")) = 0 AND OraInizio > now()) OR";
     }
     $proiezioni = substr($proiezioni, 0, -2);
     $query = "SELECT IDProiezione, IDFilm, NomeFilm, IDCinema, NomeCinema, Indirizzo, Comune, CAP, OraInizio, Prezzo FROM ((Proiezioni PR INNER JOIN Film F on PR.idFFilm = F.IDFilm) INNER JOIN Sale S ON S.IDSala = PR.idFSala) INNER JOIN Cinema C ON C.IDCinema = S.idFCinema WHERE " . $proiezioni . " ORDER BY IDProiezione";
-    echo $query;
     $connessione = mysqli_connect("localhost", "Lettiero", "Lettiero", "Multisala_Baroni_Lettiero", 12322);
     $result = mysqli_query($connessione, $query);
     $elementi = [];

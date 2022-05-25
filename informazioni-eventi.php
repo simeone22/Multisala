@@ -54,7 +54,7 @@ $row = $result->fetch_assoc();
                         }
                         ?>
                     </p>
-                    <strong>Trama</strong>
+                    <strong>Descrizione</strong>
                     <p>
                         <?php echo $row["Trama"]; ?>
                     </p>
