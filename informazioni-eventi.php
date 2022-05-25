@@ -37,17 +37,6 @@ $row = $result->fetch_assoc();
                     </h2>
                     <strong>Durata</strong>
                     <p><?php echo $row["Durata"]?> min </p>
-                    <strong>Attori</strong>
-                    <p><?php
-                        $query = "SELECT Nome, Cognome FROM Attori INNER JOIN AttoriFilm ON Attori.IDAttore = AttoriFilm.idFAttore WHERE idFFilm = ". $row["IDFilm"];
-                        $risultato = $connessione->query($query);
-                        if($risultato->num_rows > 0){
-                            $attori = [];
-                            while($r = $risultato->fetch_assoc()){
-                                $attori[] = $r["Nome"] . " " . $r["Cognome"];
-                            }
-                            echo implode(", ", $attori);
-                        }?></p>
                     <strong>Valutazione</strong>
                     <p>
                         <?php
@@ -65,17 +54,6 @@ $row = $result->fetch_assoc();
                         }
                         ?>
                     </p>
-                    <strong>Categorie</strong>
-                    <p><?php
-                        $query = "SELECT NomeCategoria FROM (Categorie INNER JOIN CategorieFilm ON Categorie.IDCategoria = CategorieFilm.idFCategoria) INNER JOIN Film ON CategorieFilm.idFFilm = Film.IDFilm WHERE idFFilm = ". $row["IDFilm"];
-                        $risultato = $connessione->query($query);
-                        if($risultato->num_rows > 0){
-                            $categorie = [];
-                            while($c = $risultato->fetch_assoc()){
-                                $categorie[] = $c["NomeCategoria"];
-                            }
-                            echo implode(", ", $categorie);
-                        }?></p>
                     <strong>Trama</strong>
                     <p>
                         <?php echo $row["Trama"]; ?>
